@@ -87,44 +87,44 @@
         <!-- Card 1: Authors -->
         <div class="contact-card card-authors">
           <div class="card-icon-wrapper">
-            <span class="card-icon">🧑‍💻</span>
+            <span class="card-icon">🤖</span>
           </div>
           <div class="card-info">
             <h4>{{ t('landing.contactAuthors') }}</h4>
-            <p>TAnh + Long</p>
+            <p>CV MENTOR</p>
           </div>
         </div>
 
         <!-- Card 2: Phone -->
-        <a href="tel:03475xxxxx" class="contact-card card-phone">
+        <a href="tel:03xxxxx" class="contact-card card-phone">
           <div class="card-icon-wrapper">
             <span class="card-icon">📞</span>
           </div>
           <div class="card-info">
             <h4>{{ t('landing.contactPhone') }}</h4>
-            <p>03475xxxxx</p>
+            <p>03xxxxx</p>
           </div>
         </a>
 
         <!-- Card 3: Email -->
-        <a href="mailto:anh7bql@gmail.com" class="contact-card card-email">
+        <a href="mailto:cv_mentor@gmail.com" class="contact-card card-email">
           <div class="card-icon-wrapper">
             <span class="card-icon">📧</span>
           </div>
           <div class="card-info">
             <h4>Email</h4>
-            <p>anh7bql@gmail.com</p>
+            <p>cv_mentor@gmail.com</p>
           </div>
         </a>
 
-        <!-- Card 4: TikTok -->
-        <a href="https://www.tiktok.com/@anh_d04" target="_blank" rel="noopener noreferrer" class="contact-card card-tiktok">
+        <!-- Card 4: GitHub -->
+        <a href="https://github.com/cv_mentor" target="_blank" rel="noopener noreferrer" class="contact-card card-github">
           <div class="card-icon-wrapper">
-            <span class="card-icon">📱</span>
+            <span class="card-icon">🔗</span>
           </div>
           <div class="card-info">
-            <h4>{{ t('landing.contactTiktok') }}</h4>
-            <p>@anh_d04</p>
+            <h4>{{ t('landing.contactGithub') }}</h4>
+            <p>cv_mentor</p>
           </div>
         </a>
       </div>
