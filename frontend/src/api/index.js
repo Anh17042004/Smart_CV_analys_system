@@ -18,7 +18,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: (import.meta.env.VITE_API_URL || '') + '/api/v1',
   timeout: 60000,  // 60 giây (AI cần thời gian xử lý)
   headers: {
     'Content-Type': 'application/json'
