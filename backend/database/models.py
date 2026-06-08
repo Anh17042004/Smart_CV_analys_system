@@ -43,7 +43,7 @@ class CVUpload(Base):
     __tablename__ = "cv_uploads"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
     file_path: Mapped[str] = mapped_column(String(500), nullable=False)
     file_type: Mapped[str] = mapped_column(String(50), nullable=False)  # "pdf" | "docx"
@@ -70,8 +70,8 @@ class CVAnalysis(Base):
     __tablename__ = "cv_analyses"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    cv_id: Mapped[int] = mapped_column(Integer, ForeignKey("cv_uploads.id"), nullable=False)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    cv_id: Mapped[int] = mapped_column(Integer, ForeignKey("cv_uploads.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
     # Input từ user (Mục 3.2)
     job_description: Mapped[str | None] = mapped_column(Text, nullable=True)       # JD paste vào (optional)
@@ -179,7 +179,7 @@ class InterviewSession(Base):
     __tablename__ = "interview_sessions"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     field: Mapped[str | None] = mapped_column(String(255), nullable=True)          # Lĩnh vực
     level: Mapped[str | None] = mapped_column(String(50), nullable=True)           # Intern / Fresher / Junior
     interview_type: Mapped[str | None] = mapped_column(String(50), nullable=True)  # HR / Technical / English
@@ -215,7 +215,7 @@ class InterviewAnswer(Base):
     __tablename__ = "interview_answers"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    session_id: Mapped[int] = mapped_column(Integer, ForeignKey("interview_sessions.id"), nullable=False)
+    session_id: Mapped[int] = mapped_column(Integer, ForeignKey("interview_sessions.id", ondelete="CASCADE"), nullable=False)
     question_number: Mapped[int] = mapped_column(Integer, nullable=False)          # Thứ tự: 1, 2, 3...
     question_text: Mapped[str] = mapped_column(Text, nullable=False)               # Câu hỏi AI đưa ra
     answer_text: Mapped[str | None] = mapped_column(Text, nullable=True)           # Câu trả lời user
