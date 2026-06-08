@@ -59,7 +59,8 @@ export function useTTS(responseMode, isAudioEnabled, sessionLanguage) {
       }
 
       const chunk = chunks[currentIdx]
-      const url = `/api/v1/tts?lang=${langCode}&text=${encodeURIComponent(chunk)}`
+      const apiBaseUrl = import.meta.env.VITE_API_URL || ''
+      const url = `${apiBaseUrl}/api/v1/tts?lang=${langCode}&text=${encodeURIComponent(chunk)}`
 
       audio = new Audio(url)
       audio.onended = () => {
