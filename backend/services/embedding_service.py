@@ -14,7 +14,7 @@ class EmbeddingService:
                 "models",
                 "vietnamese-bi-encoder"
             )
-            if os.path.exists(local_model_path):
+            if os.path.exists(local_model_path) and os.path.exists(os.path.join(local_model_path, "config.json")):
                 self._model = SentenceTransformer(local_model_path, device='cpu')
             else:
                 self._model = SentenceTransformer('bkai-foundation-models/vietnamese-bi-encoder', device='cpu')
