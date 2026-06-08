@@ -1,0 +1,462 @@
+/*
+ * CV MENTOR — Global Styles & Design System
+ * ============================================
+ * File này chứa:
+ * 1. CSS Variables (color palette, fonts, spacing)
+ * 2. Global reset
+ * 3. Dark theme base
+ * 4. Light theme overrides
+ * 5. Utility classes
+ *
+ * Design: Dark theme + Glassmorphism + Gradient accents
+ * Font: Inter (Google Fonts)
+ */
+
+/* ===== Google Fonts ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ===== CSS Variables (Design Tokens) ===== */
+:root {
+  /* Primary colors */
+  --primary: #0ea5e9;
+  --primary-light: #38bdf8;
+  --primary-dark: #0284c7;
+
+  /* Accent / gradient */
+  --accent: #6366f1;
+  --accent-2: #818cf8;
+  --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+  --gradient-accent: linear-gradient(135deg, #FF6B9D 0%, #FFB347 100%);
+
+  /* Backgrounds */
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-card: #161b22;
+  --bg-glass: rgba(22, 27, 34, 0.85);
+  --bg-navbar: rgba(13, 17, 23, 0.8);
+  --bg-dropdown: #161b22;
+  --bg-card-inner: rgba(2, 6, 23, 0.6);
+  --bg-dropzone: rgba(2, 6, 23, 0.4);
+  --bg-hover-subtle: rgba(255, 255, 255, 0.05);
+  --bg-hover-card: rgba(255, 255, 255, 0.03);
+  --bg-modal: #020617;
+  --bg-actions-bar: rgba(15, 23, 42, 0.6);
+  --bg-badge: rgba(255, 255, 255, 0.03);
+  --bg-score-pill: rgba(255, 255, 255, 0.02);
+  --bg-highlight-box: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(99, 102, 241, 0.1) 100%);
+
+  /* Hover states */
+  --hover-bg: #21262d;
+  --hover-text: #e6edf3;
+
+  /* Text colors */
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #484f58;
+  --text-heading: #ffffff;
+  --text-body: #cbd5e1;
+  --text-label: #64748b;
+  --text-accent: rgba(56, 189, 248, 0.7);
+  --text-link: #38bdf8;
+  --text-on-primary: #020617;
+
+  /* Borders */
+  --border-color: #21262d;
+  --border-glass: #30363d;
+  --border-card: rgba(255, 255, 255, 0.08);
+  --border-dashed: rgba(255, 255, 255, 0.08);
+  --border-divider: rgba(255, 255, 255, 0.08);
+  --border-highlight: rgba(14, 165, 233, 0.2);
+
+  /* Status */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #0ea5e9;
+
+  /* Tag colors */
+  --tag-matched-bg: rgba(16, 185, 129, 0.1);
+  --tag-matched-border: rgba(16, 185, 129, 0.3);
+  --tag-matched-text: #a7f3d0;
+  --tag-missing-bg: rgba(245, 158, 11, 0.1);
+  --tag-missing-border: rgba(245, 158, 11, 0.3);
+  --tag-missing-text: #fef3c7;
+
+  /* Pill / skill tag */
+  --pill-bg: rgba(255, 255, 255, 0.03);
+  --pill-border: rgba(255, 255, 255, 0.06);
+  --pill-text: #cbd5e1;
+
+  /* Nav items */
+  --nav-text: #94a3b8;
+  --nav-active-text: #ffffff;
+  --nav-active-bg: rgba(255, 255, 255, 0.08);
+
+  /* Button login outline */
+  --btn-outline-text: #f8fafc;
+  --btn-outline-border: rgba(255, 255, 255, 0.1);
+  --btn-outline-hover-border: rgba(14, 165, 233, 0.4);
+  --btn-outline-hover-bg: rgba(14, 165, 233, 0.1);
+
+  /* Checkbox */
+  --checkbox-bg: rgba(255, 255, 255, 0.05);
+  --checkbox-border: rgba(255, 255, 255, 0.15);
+
+  /* Score badge */
+  --score-badge-bg: rgba(14, 165, 233, 0.1);
+  --score-badge-border: rgba(14, 165, 233, 0.2);
+  --score-block-bg: rgba(14, 165, 233, 0.05);
+  --score-block-border: rgba(14, 165, 233, 0.15);
+
+  /* Auth tag badge */
+  --tag-badge-bg: rgba(14, 165, 233, 0.08);
+  --tag-badge-border: rgba(14, 165, 233, 0.2);
+  --tag-badge-text: #e0f2fe;
+
+  /* Landing outline button */
+  --btn-landing-outline-border: rgba(255, 255, 255, 0.1);
+  --btn-landing-outline-text: #ffffff;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px rgba(14, 165, 233, 0.35);
+  --shadow-dropdown: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Font */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Theme toggle */
+  --theme-toggle-bg: rgba(255, 255, 255, 0.05);
+  --theme-toggle-border: rgba(255, 255, 255, 0.1);
+  --theme-toggle-color: #ffffff;
+
+  /* Overlay */
+  --overlay-bg: rgba(0, 0, 0, 0.6);
+  --modal-confirm-bg: rgba(15, 23, 42, 0.95);
+
+  /* Role badges */
+  --role-user-bg: rgba(56, 189, 248, 0.1);
+  --role-user-border: rgba(56, 189, 248, 0.25);
+  --role-user-text: #38bdf8;
+  --role-admin-bg: rgba(239, 68, 68, 0.1);
+  --role-admin-border: rgba(239, 68, 68, 0.25);
+  --role-admin-text: #f87171;
+
+  /* Misc */
+  --btn-close-color: #cbd5e1;
+  --btn-unsave-color: #64748b;
+  --logo-bg: rgba(14, 165, 233, 0.1);
+  --logo-border: rgba(14, 165, 233, 0.3);
+  --logo-shadow: 0 0 15px rgba(14, 165, 233, 0.2);
+  --avatar-border: rgba(255, 255, 255, 0.08);
+  --dropdown-divider: rgba(255, 255, 255, 0.08);
+  --dropdown-item-hover-bg: rgba(255, 255, 255, 0.05);
+  --salary-badge-bg: rgba(16, 185, 129, 0.1);
+  --salary-badge-border: rgba(16, 185, 129, 0.2);
+
+  /* Input field bg */
+  --input-bg: rgba(2, 6, 23, 0.6);
+  --select-arrow-fill: white;
+
+  /* Body bg */
+  --body-bg: linear-gradient(180deg, #070b14 0%, #0d1117 42%, #101828 100%);
+  --body-radial-1: radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 28%);
+  --body-radial-2: radial-gradient(circle at top right, rgba(99, 102, 241, 0.08), transparent 24%);
+}
+
+/* ===== Light Theme Variables ===== */
+:root.light-theme {
+  color-scheme: light;
+
+  --primary: #0284c7;
+  --primary-light: #0ea5e9;
+  --primary-dark: #0369a1;
+
+  --accent: #4f46e5;
+  --accent-2: #6366f1;
+  --gradient-primary: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+
+  /* Backgrounds */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.8);
+  --bg-navbar: rgba(255, 255, 255, 0.85);
+  --bg-dropdown: #ffffff;
+  --bg-card-inner: rgba(0, 0, 0, 0.02);
+  --bg-dropzone: rgba(0, 0, 0, 0.02);
+  --bg-hover-subtle: rgba(0, 0, 0, 0.04);
+  --bg-hover-card: rgba(2, 132, 199, 0.03);
+  --bg-modal: #ffffff;
+  --bg-actions-bar: rgba(0, 0, 0, 0.03);
+  --bg-badge: rgba(0, 0, 0, 0.03);
+  --bg-score-pill: rgba(0, 0, 0, 0.02);
+  --bg-highlight-box: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(79, 70, 229, 0.05) 100%);
+
+  /* Hover states */
+  --hover-bg: #e8ecf0;
+  --hover-text: #1a202c;
+
+  /* Text */
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-heading: #0f172a;
+  --text-body: #334155;
+  --text-label: #64748b;
+  --text-accent: #0369a1;
+  --text-link: #0284c7;
+  --text-on-primary: #ffffff;
+
+  /* Borders */
+  --border-color: #e2e8f0;
+  --border-glass: #cbd5e1;
+  --border-card: rgba(0, 0, 0, 0.08);
+  --border-dashed: rgba(0, 0, 0, 0.12);
+  --border-divider: rgba(0, 0, 0, 0.08);
+  --border-highlight: rgba(2, 132, 199, 0.25);
+
+  /* Tags */
+  --tag-matched-bg: rgba(16, 185, 129, 0.1);
+  --tag-matched-border: rgba(16, 185, 129, 0.3);
+  --tag-matched-text: #047857;
+  --tag-missing-bg: rgba(245, 158, 11, 0.1);
+  --tag-missing-border: rgba(245, 158, 11, 0.3);
+  --tag-missing-text: #b45309;
+
+  /* Pill / skill tag */
+  --pill-bg: rgba(0, 0, 0, 0.04);
+  --pill-border: rgba(0, 0, 0, 0.08);
+  --pill-text: #475569;
+
+  /* Nav items */
+  --nav-text: #475569;
+  --nav-active-text: #0f172a;
+  --nav-active-bg: rgba(0, 0, 0, 0.06);
+
+  /* Button login outline */
+  --btn-outline-text: #1e293b;
+  --btn-outline-border: rgba(0, 0, 0, 0.12);
+  --btn-outline-hover-border: rgba(2, 132, 199, 0.4);
+  --btn-outline-hover-bg: rgba(2, 132, 199, 0.08);
+
+  /* Checkbox */
+  --checkbox-bg: rgba(0, 0, 0, 0.04);
+  --checkbox-border: rgba(0, 0, 0, 0.15);
+
+  /* Score badge */
+  --score-badge-bg: rgba(2, 132, 199, 0.08);
+  --score-badge-border: rgba(2, 132, 199, 0.2);
+  --score-block-bg: rgba(2, 132, 199, 0.05);
+  --score-block-border: rgba(2, 132, 199, 0.15);
+
+  /* Auth tag badge */
+  --tag-badge-bg: rgba(2, 132, 199, 0.06);
+  --tag-badge-border: rgba(2, 132, 199, 0.2);
+  --tag-badge-text: #0369a1;
+
+  /* Landing outline button */
+  --btn-landing-outline-border: rgba(0, 0, 0, 0.12);
+  --btn-landing-outline-text: #1e293b;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 4px 14px -2px rgba(2, 132, 199, 0.2);
+  --shadow-dropdown: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+
+  /* Theme toggle */
+  --theme-toggle-bg: rgba(0, 0, 0, 0.04);
+  --theme-toggle-border: rgba(0, 0, 0, 0.1);
+  --theme-toggle-color: #1e293b;
+
+  /* Overlay */
+  --overlay-bg: rgba(0, 0, 0, 0.3);
+  --modal-confirm-bg: #ffffff;
+
+  /* Role badges */
+  --role-user-bg: rgba(2, 132, 199, 0.08);
+  --role-user-border: rgba(2, 132, 199, 0.2);
+  --role-user-text: #0284c7;
+  --role-admin-bg: rgba(239, 68, 68, 0.08);
+  --role-admin-border: rgba(239, 68, 68, 0.2);
+  --role-admin-text: #dc2626;
+
+  /* Misc */
+  --btn-close-color: #64748b;
+  --btn-unsave-color: #94a3b8;
+  --logo-bg: rgba(2, 132, 199, 0.08);
+  --logo-border: rgba(2, 132, 199, 0.25);
+  --logo-shadow: 0 0 10px rgba(2, 132, 199, 0.1);
+  --avatar-border: rgba(0, 0, 0, 0.08);
+  --dropdown-divider: rgba(0, 0, 0, 0.08);
+  --dropdown-item-hover-bg: rgba(0, 0, 0, 0.04);
+  --salary-badge-bg: rgba(16, 185, 129, 0.08);
+  --salary-badge-border: rgba(16, 185, 129, 0.2);
+
+  /* Input field bg */
+  --input-bg: #ffffff;
+  --select-arrow-fill: '%23475569';
+
+  /* Body bg */
+  --body-bg: linear-gradient(160deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+  --body-radial-1: none;
+  --body-radial-2: none;
+}
+
+/* ===== Global Reset ===== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+html.light-theme {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-family);
+  background:
+    var(--body-radial-1),
+    var(--body-radial-2),
+    var(--body-bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Links ===== */
+a {
+  color: var(--text-link);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+a:hover {
+  color: var(--accent);
+}
+
+/* ===== Buttons ===== */
+button {
+  font-family: var(--font-family);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ===== Glass Card Utility ===== */
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ===== Primary Button ===== */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: 12px 28px;
+  background: var(--gradient-primary);
+  color: var(--text-on-primary);
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-normal);
+  border: none;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+  opacity: 0.95;
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ===== Input ===== */
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  transition: border-color var(--transition-fast);
+}
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+.input-field::placeholder {
+  color: var(--text-muted);
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}

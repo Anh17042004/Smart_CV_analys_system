@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  cv_mentor_db:
+    image: ankane/pgvector:v0.5.1  # Sử dụng image tích hợp sẵn pgvector
+    container_name: cv_mentor_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cv_mentor
+    ports:
+      - "5433:5432"  # Ánh xạ ra cổng 5433 trên host để tránh xung đột cổng 5432
+    volumes:
+      - cv_mentor_postgres_data:/var/lib/postgresql/data
+    networks:
+      - cv_mentor_network
+
+volumes:
+  cv_mentor_postgres_data:
+
+networks:
+  cv_mentor_network:
+    driver: bridge
