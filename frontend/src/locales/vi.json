@@ -278,6 +278,7 @@
     "aiVoice": "Giọng đọc AI",
     "femaleVoice": "Giọng Nữ (Mặc định)",
     "maleVoice": "Giọng Nam",
+    "cancelRecording": "Hủy ghi âm",
     "micStatusActive": "Đang ghi âm câu trả lời của bạn... Nói xong nhấn nút dừng hoặc chờ tự động nhận diện.",
     "micStatusTranscribing": "AI đang xử lý giọng nói... Vui lòng đợi.",
     "micStatusWaiting": "Nhấn nút Mic để bắt đầu nói...",

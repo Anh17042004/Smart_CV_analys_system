@@ -278,6 +278,7 @@
     "aiVoice": "AI Voice",
     "femaleVoice": "Female (Default)",
     "maleVoice": "Male",
+    "cancelRecording": "Cancel recording",
     "micStatusActive": "Recording your answer... Speak now. Click stop when finished or wait for auto-recognition.",
     "micStatusTranscribing": "AI is transcribing your voice... Please wait.",
     "micStatusWaiting": "Click Mic to start speaking...",

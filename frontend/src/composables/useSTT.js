@@ -15,6 +15,7 @@ export function useSTT(userAnswer, responseMode, sessionLanguage, isAiSpeaking) 
   let mediaRecorder = null
   let audioChunks = []
   let stream = null
+  let isRecordingCancelled = false
 
   // Check Whisper availability on backend
   async function checkWhisperStatus() {
@@ -68,6 +69,7 @@ export function useSTT(userAnswer, responseMode, sessionLanguage, isAiSpeaking) 
 
   async function startListening() {
     if (isListening.value || (isAiSpeaking && isAiSpeaking.value)) return
+    isRecordingCancelled = false
 
     if (isWhisperAvailable.value) {
       // Use MediaRecorder for Whisper STT
@@ -92,6 +94,14 @@ export function useSTT(userAnswer, responseMode, sessionLanguage, isAiSpeaking) 
         }
 
         mediaRecorder.onstop = async () => {
+          // Discard recording if cancelled
+          if (isRecordingCancelled) {
+            if (stream) {
+              stream.getTracks().forEach(track => track.stop())
+            }
+            return
+          }
+
           const mimeType = mediaRecorder.mimeType || 'audio/webm'
           const audioBlob = new Blob(audioChunks, { type: mimeType })
           
@@ -139,6 +149,24 @@ export function useSTT(userAnswer, responseMode, sessionLanguage, isAiSpeaking) 
     } else if (recognition) {
       recognition.stop()
       isListening.value = false
+      preSpeechText = ''
+    }
+  }
+
+  function cancelListening() {
+    if (!isListening.value) return
+
+    if (isWhisperAvailable.value) {
+      isRecordingCancelled = true
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop()
+      }
+      isListening.value = false
+    } else if (recognition) {
+      recognition.stop()
+      isListening.value = false
+      // Restore previous text value
+      userAnswer.value = preSpeechText.trim()
       preSpeechText = ''
     }
   }
@@ -209,6 +237,7 @@ export function useSTT(userAnswer, responseMode, sessionLanguage, isAiSpeaking) 
     isTranscribing,
     startListening,
     stopListening,
+    cancelListening,
     toggleListening,
     isSupported: !!SpeechRecognition || !!navigator.mediaDevices?.getUserMedia
   }

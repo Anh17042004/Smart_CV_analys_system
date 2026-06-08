@@ -370,18 +370,30 @@
             ></textarea>
             
             <div class="chat-input-actions">
-              <!-- Mic button for voice recognition -->
-              <button 
-                v-if="responseMode === 'Voice'"
-                class="btn-mic" 
-                :class="{ active: isListening, transcribing: isTranscribing }"
-                @click="toggleListening"
-                :disabled="isAiSpeaking || isAiThinking || isTranscribing"
-                title="Ghi âm bằng giọng nói"
-              >
-                <span v-if="isTranscribing" class="small-spinner"></span>
-                <span v-else>🎙️</span>
-              </button>
+              <div class="mic-controls-wrapper" style="display: flex; gap: 10px; align-items: center;">
+                <!-- Mic button for voice recognition -->
+                <button 
+                  v-if="responseMode === 'Voice'"
+                  class="btn-mic" 
+                  :class="{ active: isListening, transcribing: isTranscribing }"
+                  @click="toggleListening"
+                  :disabled="isAiSpeaking || isAiThinking || isTranscribing"
+                  title="Ghi âm bằng giọng nói"
+                >
+                  <span v-if="isTranscribing" class="small-spinner"></span>
+                  <span v-else>🎙️</span>
+                </button>
+
+                <!-- Cancel/Discard recording button -->
+                <button 
+                  v-if="responseMode === 'Voice' && isListening"
+                  class="btn-cancel-recording" 
+                  @click="cancelListening"
+                  :title="t('mockInterview.cancelRecording')"
+                >
+                  ❌
+                </button>
+              </div>
 
               <button 
                 @click="submitAnswer" 
@@ -460,7 +472,7 @@ const jdExtracting = ref(false)
 const jdFileName = ref('')
 
 const { isAiSpeaking, speakQuestion, cancelSpeech } = useTTS(responseMode, isAudioEnabled, sessionLanguage, ttsVoiceType)
-const { isListening, isTranscribing, startListening, stopListening, toggleListening } = useSTT(userAnswer, responseMode, sessionLanguage, isAiSpeaking)
+const { isListening, isTranscribing, startListening, stopListening, cancelListening, toggleListening } = useSTT(userAnswer, responseMode, sessionLanguage, isAiSpeaking)
 
 watch(interviewType, (newVal) => {
   if (newVal && newVal.toLowerCase().includes('english')) {
@@ -1466,6 +1478,27 @@ onMounted(() => {
   border-top-color: #eab308;
   border-radius: 50%;
   animation: spin 0.8s infinite linear;
+}
+
+.btn-cancel-recording {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-cancel-recording:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  transform: scale(1.05);
 }
 
 .btn-send {
