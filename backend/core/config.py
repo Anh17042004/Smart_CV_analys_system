@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     OLLAMA_API_KEY: str
     OLLAMA_MODEL: str = "gpt-oss:120b"
     
+    # Groq Cloud API (để chạy Whisper STT miễn phí tốc độ cao)
+    GROQ_API_KEY: str = ""
+    
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

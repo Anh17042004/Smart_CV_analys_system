@@ -165,32 +165,62 @@
           <h4 class="form-section-title">🔒 {{ t('profile.changePassword') }}</h4>
           <div class="form-group">
             <label class="form-label">{{ t('profile.currentPassword') }}</label>
-            <input 
-              type="password" 
-              v-model="formCurrentPassword" 
-              class="form-input" 
-              required 
-            />
+            <div class="password-group">
+              <input 
+                :type="showCurrentPassword ? 'text' : 'password'" 
+                v-model="formCurrentPassword" 
+                class="form-input" 
+                required 
+              />
+              <button 
+                type="button" 
+                class="password-toggle" 
+                @click="showCurrentPassword = !showCurrentPassword"
+                tabindex="-1"
+              >
+                {{ showCurrentPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">{{ t('profile.newPassword') }}</label>
-            <input 
-              type="password" 
-              v-model="formNewPassword" 
-              class="form-input" 
-              required 
-            />
+            <div class="password-group">
+              <input 
+                :type="showNewPassword ? 'text' : 'password'" 
+                v-model="formNewPassword" 
+                class="form-input" 
+                required 
+              />
+              <button 
+                type="button" 
+                class="password-toggle" 
+                @click="showNewPassword = !showNewPassword"
+                tabindex="-1"
+              >
+                {{ showNewPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">{{ t('profile.confirmPassword') }}</label>
-            <input 
-              type="password" 
-              v-model="formConfirmPassword" 
-              class="form-input" 
-              required 
-            />
+            <div class="password-group">
+              <input 
+                :type="showConfirmPassword ? 'text' : 'password'" 
+                v-model="formConfirmPassword" 
+                class="form-input" 
+                required 
+              />
+              <button 
+                type="button" 
+                class="password-toggle" 
+                @click="showConfirmPassword = !showConfirmPassword"
+                tabindex="-1"
+              >
+                {{ showConfirmPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
           </div>
 
           <button type="submit" class="btn-outline-submit" :disabled="isChangingPassword">
@@ -260,6 +290,9 @@ const formFullName = ref('')
 const formCurrentPassword = ref('')
 const formNewPassword = ref('')
 const formConfirmPassword = ref('')
+const showCurrentPassword = ref(false)
+const showNewPassword = ref(false)
+const showConfirmPassword = ref(false)
 const isUpdatingProfile = ref(false)
 const isChangingPassword = ref(false)
 const profileMessage = ref('')
@@ -271,6 +304,9 @@ function openProfileModal() {
   formCurrentPassword.value = ''
   formNewPassword.value = ''
   formConfirmPassword.value = ''
+  showCurrentPassword.value = false
+  showNewPassword.value = false
+  showConfirmPassword.value = false
   profileMessage.value = ''
   profileMessageType.value = ''
   showProfileModal.value = true
@@ -278,6 +314,9 @@ function openProfileModal() {
 
 function closeProfileModal() {
   showProfileModal.value = false
+  showCurrentPassword.value = false
+  showNewPassword.value = false
+  showConfirmPassword.value = false
 }
 
 async function handleUpdateProfile() {

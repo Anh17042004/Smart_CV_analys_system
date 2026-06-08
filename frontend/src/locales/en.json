@@ -276,6 +276,7 @@
     "voiceMode": "Voice Mode",
     "textMode": "Text Mode",
     "micStatusActive": "Recording your answer... Speak now. Click stop when finished or wait for auto-recognition.",
+    "micStatusTranscribing": "AI is transcribing your voice... Please wait.",
     "micStatusWaiting": "Click Mic to start speaking...",
     "aiSpeaking": "AI is speaking... Please wait.",
     "submitAnswer": "Submit Answer",

@@ -268,7 +268,7 @@
         <!-- AI Interviewer Avatar Card -->
         <div class="room-avatar-card glass-card">
           <div class="avatar-container">
-            <div class="avatar-glow" :class="{ speaking: isAiSpeaking, recording: isListening }"></div>
+            <div class="avatar-glow" :class="{ speaking: isAiSpeaking, recording: isListening, transcribing: isTranscribing }"></div>
             <div class="avatar-ring">
               <div class="avatar-visualizer">
                 <!-- Soundwave Animation -->
@@ -279,6 +279,7 @@
                 <div class="status-overlay">
                   <span v-if="isAiSpeaking" class="status-emoji animate-pulse">🤖</span>
                   <span v-else-if="isListening" class="status-emoji animate-pulse">🎙️</span>
+                  <span v-else-if="isTranscribing" class="status-emoji animate-pulse">⏳</span>
                   <span v-else class="status-emoji">🧑‍💼</span>
                 </div>
               </div>
@@ -289,6 +290,7 @@
             <h3>AI Recruiter</h3>
             <p v-if="isAiSpeaking" class="status-text text-accent">{{ t('mockInterview.aiSpeaking') }}</p>
             <p v-else-if="isListening" class="status-text text-success">{{ t('mockInterview.micStatusActive') }}</p>
+            <p v-else-if="isTranscribing" class="status-text text-warning">{{ t('mockInterview.micStatusTranscribing') }}</p>
             <p v-else class="status-text">{{ t('mockInterview.micStatusWaiting') }}</p>
           </div>
 
@@ -350,9 +352,9 @@
             <textarea 
               v-model="userAnswer" 
               class="chat-textarea" 
-              :placeholder="isListening ? 'Giọng nói đang được ghi âm...' : 'Nhập câu trả lời của bạn ở đây...'"
+              :placeholder="isTranscribing ? 'AI đang nhận dạng giọng nói (Whisper)...' : isListening ? 'Giọng nói đang được ghi âm... Nhấn Mic lần nữa để hoàn thành.' : 'Nhập câu trả lời của bạn ở đây...'"
               @keydown.enter.prevent="submitTypedAnswer"
-              :disabled="isAiSpeaking || isAiThinking"
+              :disabled="isAiSpeaking || isAiThinking || isTranscribing"
             ></textarea>
             
             <div class="chat-input-actions">
@@ -360,18 +362,19 @@
               <button 
                 v-if="responseMode === 'Voice'"
                 class="btn-mic" 
-                :class="{ active: isListening }"
+                :class="{ active: isListening, transcribing: isTranscribing }"
                 @click="toggleListening"
-                :disabled="isAiSpeaking || isAiThinking"
+                :disabled="isAiSpeaking || isAiThinking || isTranscribing"
                 title="Ghi âm bằng giọng nói"
               >
-                🎙️
+                <span v-if="isTranscribing" class="small-spinner"></span>
+                <span v-else>🎙️</span>
               </button>
 
               <button 
                 @click="submitAnswer" 
                 class="btn-primary btn-send"
-                :disabled="!userAnswer.trim() || isAiSpeaking || isAiThinking"
+                :disabled="!userAnswer.trim() || isAiSpeaking || isAiThinking || isTranscribing"
               >
                 <span>{{ t('mockInterview.submitAnswer') }} ➔</span>
               </button>
@@ -444,7 +447,7 @@ const jdExtracting = ref(false)
 const jdFileName = ref('')
 
 const { isAiSpeaking, speakQuestion, cancelSpeech } = useTTS(responseMode, isAudioEnabled, sessionLanguage)
-const { isListening, startListening, stopListening, toggleListening } = useSTT(userAnswer, responseMode, sessionLanguage, isAiSpeaking)
+const { isListening, isTranscribing, startListening, stopListening, toggleListening } = useSTT(userAnswer, responseMode, sessionLanguage, isAiSpeaking)
 
 watch(interviewType, (newVal) => {
   if (newVal && newVal.toLowerCase().includes('english')) {
@@ -1082,6 +1085,12 @@ onMounted(() => {
   opacity: 0.45;
 }
 
+.avatar-glow.transcribing {
+  animation: pulse-avatar 1.5s infinite alternate;
+  background: radial-gradient(circle, #eab308 0%, transparent 70%);
+  opacity: 0.45;
+}
+
 .avatar-ring {
   width: 100%;
   height: 100%;
@@ -1427,6 +1436,23 @@ onMounted(() => {
   color: var(--success);
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
   animation: soundwave-pulse 1s infinite alternate;
+}
+
+.btn-mic.transcribing {
+  background: rgba(234, 179, 8, 0.15);
+  border-color: #eab308;
+  color: #eab308;
+  box-shadow: 0 0 12px rgba(234, 179, 8, 0.3);
+}
+
+.small-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(234, 179, 8, 0.2);
+  border-top-color: #eab308;
+  border-radius: 50%;
+  animation: spin 0.8s infinite linear;
 }
 
 .btn-send {

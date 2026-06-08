@@ -20,6 +20,26 @@
 import { defineStore } from 'pinia'
 import api from '../api'
 
+const parseError = (error) => {
+  const data = error.response?.data
+  if (data) {
+    if (Array.isArray(data.detail)) {
+      return data.detail.map(err => {
+        const field = err.loc[err.loc.length - 1]
+        let msg = err.msg
+        if (msg.includes('at least 8 characters')) {
+          msg = 'phải chứa ít nhất 8 ký tự'
+        }
+        return `${field}: ${msg}`
+      }).join(', ')
+    }
+    if (data.message) {
+      return data.message
+    }
+  }
+  return error.message || 'Thao tác thất bại'
+}
+
 export const useAuthStore = defineStore('auth', {
   // === State ===
   state: () => ({
@@ -44,7 +64,7 @@ export const useAuthStore = defineStore('auth', {
         await this.fetchUser()
         return response.data
       } catch (error) {
-        throw error.response?.data?.detail || error.message || 'Đăng nhập thất bại'
+        throw parseError(error)
       }
     },
 
@@ -57,7 +77,7 @@ export const useAuthStore = defineStore('auth', {
         })
         return response.data
       } catch (error) {
-        throw error.response?.data?.detail || error.message || 'Đăng ký thất bại'
+        throw parseError(error)
       }
     },
 
@@ -68,7 +88,7 @@ export const useAuthStore = defineStore('auth', {
         return response.data
       } catch (error) {
         this.logout()
-        throw error.response?.data?.detail || error.message || 'Không thể lấy thông tin người dùng'
+        throw parseError(error)
       }
     },
 
@@ -84,7 +104,7 @@ export const useAuthStore = defineStore('auth', {
         this.user = response.data
         return response.data
       } catch (error) {
-        throw error.response?.data?.detail || error.message || 'Cập nhật thông tin thất bại'
+        throw parseError(error)
       }
     },
 
@@ -96,7 +116,7 @@ export const useAuthStore = defineStore('auth', {
         })
         return response.data
       } catch (error) {
-        throw error.response?.data?.detail || error.message || 'Đổi mật khẩu thất bại'
+        throw parseError(error)
       }
     }
   }

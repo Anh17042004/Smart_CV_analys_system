@@ -15,14 +15,22 @@
             required 
           />
         </div>
-        <div class="input-group">
+        <div class="input-group password-group">
           <input 
             v-model="password" 
-            type="password" 
+            :type="showPassword ? 'text' : 'password'" 
             :placeholder="t('auth.password')" 
             class="input-field" 
             required 
           />
+          <button 
+            type="button" 
+            class="password-toggle" 
+            @click="showPassword = !showPassword"
+            tabindex="-1"
+          >
+            {{ showPassword ? '🙈' : '👁️' }}
+          </button>
         </div>
         
         <p v-if="error" class="error-text">{{ error }}</p>
@@ -53,6 +61,7 @@ const { t } = useI18n()
 
 const email = ref('')
 const password = ref('')
+const showPassword = ref(false)
 const loading = ref(false)
 const error = ref(null)
 
