@@ -14,20 +14,75 @@
         <h2>{{ t('jobRec.selectResume') }}</h2>
         <p class="selection-support-text">{{ t('jobRec.selectDesc') }}</p>
 
-        <div v-if="historyLoading" class="loading-text">
-          {{ t('jobRec.loadingCVs') }}
-        </div>
-        <div v-else-if="cvList.length" class="input-group">
-          <label class="input-label">{{ t('jobRec.yourResumes') }}</label>
-          <select v-model="selectedCvId" class="input-field select-field">
-            <option value="" disabled>{{ t('jobRec.chooseCv') }}</option>
-            <option v-for="cv in cvList" :key="cv.id" :value="cv.cv_id">
-              {{ t('dashboard.report') }} #{{ cv.id }} ({{ t('dashboard.score') }}: {{ cv.resume_score }}% - {{ cv.target_role || t('cvHistory.generalAnalysis') }})
-            </option>
-          </select>
+        <!-- Selection Mode Tabs -->
+        <div class="cv-mode-tabs">
+          <button 
+            type="button" 
+            class="tab-btn" 
+            :class="{ active: cvSourceMode === 'history' }"
+            @click="cvSourceMode = 'history'"
+          >
+            {{ t('jobRec.selectFromHistory') }}
+          </button>
+          <button 
+            type="button" 
+            class="tab-btn" 
+            :class="{ active: cvSourceMode === 'upload' }"
+            @click="cvSourceMode = 'upload'"
+          >
+            {{ t('jobRec.uploadNewCv') }}
+          </button>
         </div>
 
-        <div v-if="cvList.length" class="input-group" style="margin-top: 20px;">
+        <!-- History Mode Selection -->
+        <div v-if="cvSourceMode === 'history'">
+          <div v-if="historyLoading" class="loading-text">
+            {{ t('jobRec.loadingCVs') }}
+          </div>
+          <div v-else-if="cvList.length" class="input-group">
+            <label class="input-label">{{ t('jobRec.yourResumes') }}</label>
+            <select v-model="selectedCvId" class="input-field select-field">
+              <option value="" disabled>{{ t('jobRec.chooseCv') }}</option>
+              <option v-for="cv in cvList" :key="cv.id" :value="cv.cv_id">
+                {{ t('dashboard.report') }} #{{ cv.id }} ({{ t('dashboard.score') }}: {{ cv.resume_score }}% - {{ cv.target_role || t('cvHistory.generalAnalysis') }})
+              </option>
+            </select>
+          </div>
+          <div v-else class="empty-cv-alert">
+            <p>{{ t('jobRec.noCVs') }}</p>
+            <button type="button" @click="cvSourceMode = 'upload'" class="btn-primary select-btn">{{ t('jobRec.uploadFirst') }}</button>
+          </div>
+        </div>
+
+        <!-- Direct Upload Mode -->
+        <div v-else class="mode-content">
+          <div 
+            class="quick-upload-zone"
+            :class="{ dragover: cvDragOver, uploaded: selectedCvId }"
+            @dragover.prevent="cvDragOver = true"
+            @dragleave.prevent="cvDragOver = false"
+            @drop.prevent="handleCvDrop"
+            @click="triggerCvFileInput"
+          >
+            <input 
+              type="file" 
+              ref="cvFileInput" 
+              class="hidden-file-input" 
+              accept=".pdf,.docx" 
+              @change="handleCvFileChange"
+            />
+            <div class="upload-zone-content">
+              <span class="upload-icon">{{ isUploadingCv ? '⏳' : selectedCvId ? '✅' : '📤' }}</span>
+              <p class="upload-text">
+                {{ isUploadingCv ? t('jobRec.uploadingCv') : selectedCvId ? t('jobRec.cvLoaded', { filename: uploadedCvFilename }) : t('jobRec.dragDropOrClick') }}
+              </p>
+              <p class="upload-subtext" v-if="!isUploadingCv && !selectedCvId">{{ t('jobRec.instantAnalysis') }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Limit selector (always visible) -->
+        <div class="input-group" style="margin-top: 20px;">
           <label class="input-label">{{ t('jobRec.numJobs') }}</label>
           <select v-model="limitVal" class="input-field select-field">
             <option :value="3">3 jobs</option>
@@ -38,15 +93,9 @@
           </select>
         </div>
 
-        <div v-else class="empty-cv-alert">
-          <p>{{ t('jobRec.noCVs') }}</p>
-          <router-link to="/cv-analysis" class="btn-primary select-btn">{{ t('jobRec.uploadFirst') }}</router-link>
-        </div>
-
         <button 
-          v-if="cvList.length"
           @click="fetchRecommendations" 
-          :disabled="loading || !selectedCvId" 
+          :disabled="loading || !selectedCvId || isUploadingCv" 
           class="btn-primary recommend-btn"
         >
           <span v-if="loading" class="spinner">⏳</span>
@@ -174,6 +223,13 @@ const error = ref(null)
 const recommendations = ref([])
 const activeJob = ref(null)
 
+// Direct upload refs
+const cvSourceMode = ref('history')
+const cvDragOver = ref(false)
+const cvFileInput = ref(null)
+const isUploadingCv = ref(false)
+const uploadedCvFilename = ref('')
+
 async function loadHistory() {
   try {
     const res = await api.get('/cv/history')
@@ -182,6 +238,55 @@ async function loadHistory() {
     console.error('Lỗi khi tải danh sách CV:', err)
   } finally {
     historyLoading.value = false
+  }
+}
+
+function triggerCvFileInput() {
+  if (cvFileInput.value) {
+    cvFileInput.value.click()
+  }
+}
+
+function handleCvFileChange(e) {
+  const file = e.target.files[0]
+  if (file) {
+    uploadCvDirectly(file)
+  }
+}
+
+function handleCvDrop(e) {
+  cvDragOver.value = false
+  const file = e.dataTransfer.files[0]
+  if (file) {
+    uploadCvDirectly(file)
+  }
+}
+
+async function uploadCvDirectly(file) {
+  if (isUploadingCv.value) return
+  
+  isUploadingCv.value = true
+  selectedCvId.value = null
+  uploadedCvFilename.value = ''
+  
+  const formData = new FormData()
+  formData.append('file', file)
+  
+  try {
+    const res = await api.post('/cv/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    selectedCvId.value = res.data.id
+    uploadedCvFilename.value = file.name
+    
+    // Refresh history
+    await loadHistory()
+  } catch (err) {
+    alert('Không thể tải lên và trích xuất CV: ' + (err.response?.data?.detail || err.message))
+  } finally {
+    isUploadingCv.value = false
   }
 }
 
@@ -679,5 +784,88 @@ onMounted(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+/* Mode Tabs */
+.cv-mode-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-divider, rgba(255, 255, 255, 0.08));
+  padding-bottom: 8px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-label);
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all var(--transition-fast);
+  border-radius: var(--radius-md);
+}
+
+.tab-btn:hover {
+  color: var(--text-heading);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.tab-btn.active {
+  color: var(--text-link);
+  background-color: rgba(14, 165, 233, 0.08);
+}
+
+/* Quick Upload Zone */
+.quick-upload-zone {
+  border: 2px dashed var(--border-dashed);
+  background-color: var(--bg-dropzone);
+  border-radius: var(--radius-lg);
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-upload-zone:hover, .quick-upload-zone.dragover {
+  border-color: var(--border-highlight);
+  background-color: var(--bg-hover-subtle);
+  transform: translateY(-2px);
+}
+
+.quick-upload-zone.uploaded {
+  border-color: #10b981;
+  background-color: rgba(16, 185, 129, 0.03);
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.upload-zone-content {
+  pointer-events: none;
+}
+
+.upload-icon {
+  font-size: 2.2rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.upload-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin-bottom: 4px;
+}
+
+.upload-subtext {
+  font-size: 0.75rem;
+  color: var(--text-label);
 }
 </style>
