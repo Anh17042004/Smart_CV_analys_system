@@ -145,6 +145,18 @@
             </div>
           </div>
 
+          <!-- AI Voice Selection (Only visible if Voice mode is chosen) -->
+          <div v-if="responseMode === 'Voice'" class="form-group-row">
+            <div class="form-group">
+              <label class="form-label">{{ t('mockInterview.aiVoice') }}</label>
+              <select v-model="ttsVoiceType" class="form-select">
+                <option value="female">{{ t('mockInterview.femaleVoice') }}</option>
+                <option value="male">{{ t('mockInterview.maleVoice') }}</option>
+              </select>
+            </div>
+            <div class="form-group"></div>
+          </div>
+
           <!-- Context CV selector -->
           <div v-if="scenario === 'cvBased' || scenario === 'jdBased'" class="form-group">
             <label class="form-label">{{ t('mockInterview.selectCV') }}</label>
@@ -418,6 +430,7 @@ const language = ref('Vietnamese')
 const sessionLanguage = ref('Vietnamese')
 const totalQuestions = ref(5)
 const isAudioEnabled = ref(true)
+const ttsVoiceType = ref('female') // 'female' or 'male'
 
 // Context files lists
 const cvHistory = ref([])
@@ -446,7 +459,7 @@ const jdFileInput = ref(null)
 const jdExtracting = ref(false)
 const jdFileName = ref('')
 
-const { isAiSpeaking, speakQuestion, cancelSpeech } = useTTS(responseMode, isAudioEnabled, sessionLanguage)
+const { isAiSpeaking, speakQuestion, cancelSpeech } = useTTS(responseMode, isAudioEnabled, sessionLanguage, ttsVoiceType)
 const { isListening, isTranscribing, startListening, stopListening, toggleListening } = useSTT(userAnswer, responseMode, sessionLanguage, isAiSpeaking)
 
 watch(interviewType, (newVal) => {

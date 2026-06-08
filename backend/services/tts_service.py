@@ -1,33 +1,31 @@
-import urllib.request
-import urllib.parse
+import edge_tts
 from fastapi.responses import StreamingResponse
 from core.logger import logger
 
 class TTSService:
-    def stream_tts(self, text: str, lang: str = "vi") -> StreamingResponse:
-        """Tải luồng âm thanh từ Google Translate TTS và chuyển tiếp về Client."""
-        if len(text) > 200:
-            text = text[:200]
-        
-        encoded_text = urllib.parse.quote(text)
-        url = f"https://translate.google.com/translate_tts?ie=UTF-8&tl={lang}&client=tw-ob&q={encoded_text}"
-        
-        req = urllib.request.Request(url, headers={
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        })
-        
-        def stream_audio():
-            try:
-                with urllib.request.urlopen(req) as response:
-                    while True:
-                        chunk = response.read(4096)
-                        if not chunk:
-                            break
-                        yield chunk
-            except Exception as e:
-                logger.error(f"❌ Lỗi proxy TTS: {e}")
+    async def stream_tts(self, text: str, voice: str = "vi-VN-HoaiMyNeural") -> StreamingResponse:
+        """
+        Tạo luồng phát âm thanh trực tuyến từ Microsoft Edge TTS và chuyển tiếp về Client.
+        """
+        try:
+            communicate = edge_tts.Communicate(text, voice)
+            
+            async def stream_generator():
+                try:
+                    async for chunk in communicate.stream():
+                        if chunk["type"] == "audio":
+                            yield chunk["data"]
+                except Exception as stream_err:
+                    logger.error(f"❌ Lỗi trong generator stream Edge TTS: {stream_err}")
+                    yield b""
+                    
+            return StreamingResponse(stream_generator(), media_type="audio/mpeg")
+            
+        except Exception as e:
+            logger.error(f"❌ Lỗi khi khởi tạo Edge TTS: {e}")
+            # Fallback trả về stream rỗng để tránh treo kết nối client
+            async def empty_generator():
                 yield b""
-
-        return StreamingResponse(stream_audio(), media_type="audio/mpeg")
+            return StreamingResponse(empty_generator(), media_type="audio/mpeg")
 
 tts_service = TTSService()

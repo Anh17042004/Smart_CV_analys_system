@@ -1,104 +1,40 @@
 import { ref, watch, onUnmounted } from 'vue'
 
-export function useTTS(responseMode, isAudioEnabled, sessionLanguage) {
+export function useTTS(responseMode, isAudioEnabled, sessionLanguage, ttsVoiceType) {
   const isAiSpeaking = ref(false)
-  let googleAudioController = null
+  let activeAudio = null
 
-  function splitTextIntoChunks(text, maxLen = 150) {
-    const chunks = []
-    if (!text) return chunks
+  function playEdgeTTS(text, voice, onEnd, onError) {
+    const apiBaseUrl = import.meta.env.VITE_API_URL || ''
+    const url = `${apiBaseUrl}/api/v1/tts?text=${encodeURIComponent(text)}&voice=${voice}`
 
-    const sentences = text.match(/[^.!?]+[.!?]*|.+/g) || [text]
+    const audio = new Audio(url)
+    activeAudio = audio
 
-    let currentChunk = ''
-    for (const sentence of sentences) {
-      if ((currentChunk + sentence).length > maxLen) {
-        if (currentChunk.trim()) {
-          chunks.push(currentChunk.trim())
-          currentChunk = ''
-        }
-        
-        if (sentence.length > maxLen) {
-          const words = sentence.split(/\s+/)
-          for (const word of words) {
-            if ((currentChunk + ' ' + word).length > maxLen) {
-              if (currentChunk.trim()) {
-                chunks.push(currentChunk.trim())
-              }
-              currentChunk = word
-            } else {
-              currentChunk = currentChunk ? currentChunk + ' ' + word : word
-            }
-          }
-        } else {
-          currentChunk = sentence
-        }
-      } else {
-        currentChunk = currentChunk ? currentChunk + ' ' + sentence : sentence
-      }
+    audio.onended = () => {
+      activeAudio = null
+      if (onEnd) onEnd()
     }
 
-    if (currentChunk.trim()) {
-      chunks.push(currentChunk.trim())
+    audio.onerror = (e) => {
+      console.error('[Edge TTS] Audio playback error:', e)
+      activeAudio = null
+      if (onError) onError(e)
     }
 
-    return chunks
-  }
-
-  function playGoogleTTS(text, langCode, onEnd, onError) {
-    const chunks = splitTextIntoChunks(text, 150)
-    let currentIdx = 0
-    let audio = null
-    let isCancelled = false
-
-    const playNext = () => {
-      if (isCancelled) return
-      if (currentIdx >= chunks.length) {
-        if (onEnd) onEnd()
-        return
-      }
-
-      const chunk = chunks[currentIdx]
-      const apiBaseUrl = import.meta.env.VITE_API_URL || ''
-      const url = `${apiBaseUrl}/api/v1/tts?lang=${langCode}&text=${encodeURIComponent(chunk)}`
-
-      audio = new Audio(url)
-      audio.onended = () => {
-        currentIdx++
-        playNext()
-      }
-      audio.onerror = (e) => {
-        console.error('[Google TTS] Audio playback error:', e)
-        if (onError) onError(e)
-      }
-      
-      audio.play().catch(err => {
-        console.error('[Google TTS] play() failed:', err)
-        if (onError) onError(err)
-      })
-    }
-
-    playNext()
-
-    return {
-      cancel: () => {
-        isCancelled = true
-        if (audio) {
-          audio.pause()
-          audio.src = ''
-          audio = null
-        }
-        currentIdx = chunks.length
-      }
-    }
+    audio.play().catch(err => {
+      console.error('[Edge TTS] play() failed:', err)
+      activeAudio = null
+      if (onError) onError(err)
+    })
   }
 
   function cancelSpeech() {
-    if (googleAudioController) {
-      googleAudioController.cancel()
-      googleAudioController = null
+    if (activeAudio) {
+      activeAudio.pause()
+      activeAudio.src = ''
+      activeAudio = null
     }
-    window.speechSynthesis?.cancel()
     isAiSpeaking.value = false
   }
 
@@ -110,125 +46,33 @@ export function useTTS(responseMode, isAudioEnabled, sessionLanguage) {
     cancelSpeech()
     isAiSpeaking.value = true
 
-    const lang = (sessionLanguage.value === 'English') ? 'en-US' : 'vi-VN'
+    // Map voice name based on language and user preference
+    const isEnglish = sessionLanguage.value === 'English'
+    const voiceMode = (ttsVoiceType && ttsVoiceType.value === 'male') ? 'male' : 'female'
     
-    const performSpeakNative = () => {
-      console.log('[TTS] Falling back to native SpeechSynthesis')
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.lang = lang
+    let voice = 'vi-VN-HoaiMyNeural'
+    if (isEnglish) {
+      voice = (voiceMode === 'male') ? 'en-US-GuyNeural' : 'en-US-AriaNeural'
+    } else {
+      voice = (voiceMode === 'male') ? 'vi-VN-NamMinhNeural' : 'vi-VN-HoaiMyNeural'
+    }
 
-      if (window.speechSynthesis) {
-        const voices = window.speechSynthesis.getVoices()
-        let voice = voices.find(v => {
-          const l = v.lang.toLowerCase().replace('_', '-');
-          return l === lang.toLowerCase() || l === lang.split('-')[0].toLowerCase();
-        })
-        
-        if (!voice) {
-          voice = voices.find(v => v.lang.toLowerCase().startsWith(lang.split('-')[0].toLowerCase()))
-        }
-
-        if (voice) {
-          utterance.voice = voice
-          console.log(`[TTS Native] Using voice: ${voice.name} (${voice.lang})`)
-        } else {
-          console.warn(`[TTS Native] No suitable voice found for lang: ${lang}.`)
-        }
-      }
-
-      utterance.onend = () => {
+    playEdgeTTS(
+      text,
+      voice,
+      // onEnd
+      () => {
         isAiSpeaking.value = false
         if (responseMode.value === 'Voice' && onStartListening) {
           onStartListening()
         }
-      }
-
-      utterance.onerror = (e) => {
-        console.error('[TTS Native] Utterance error:', e)
+      },
+      // onError
+      (err) => {
+        console.warn('[TTS] Edge TTS failed:', err)
         isAiSpeaking.value = false
       }
-
-      window.speechSynthesis.speak(utterance)
-    }
-
-    if (lang === 'vi-VN') {
-      console.log('[TTS] Attempting Google Translate TTS for Vietnamese...')
-      try {
-        googleAudioController = playGoogleTTS(
-          text,
-          'vi',
-          // onEnd
-          () => {
-            isAiSpeaking.value = false
-            googleAudioController = null
-            if (responseMode.value === 'Voice' && onStartListening) {
-              onStartListening()
-            }
-          },
-          // onError
-          (err) => {
-            console.warn('[TTS] Google Translate TTS failed, falling back to native TTS:', err)
-            googleAudioController = null
-            performSpeakNative()
-          }
-        )
-      } catch (e) {
-        console.warn('[TTS] Failed to initialize Google Translate TTS, falling back:', e)
-        performSpeakNative()
-      }
-    } else {
-      // English logic
-      const performSpeak = () => {
-        const utterance = new SpeechSynthesisUtterance(text)
-        utterance.lang = lang
-
-        if (window.speechSynthesis) {
-          const voices = window.speechSynthesis.getVoices()
-          let voice = voices.find(v => {
-            const l = v.lang.toLowerCase().replace('_', '-');
-            return l === lang.toLowerCase() || l === lang.split('-')[0].toLowerCase();
-          })
-          
-          if (!voice) {
-            voice = voices.find(v => v.lang.toLowerCase().startsWith(lang.split('-')[0].toLowerCase()))
-          }
-
-          if (voice) {
-            utterance.voice = voice
-          }
-        }
-
-        utterance.onend = () => {
-          isAiSpeaking.value = false
-          if (responseMode.value === 'Voice' && onStartListening) {
-            onStartListening()
-          }
-        }
-
-        utterance.onerror = (e) => {
-          console.error('[TTS Native] Utterance error:', e)
-          isAiSpeaking.value = false
-        }
-
-        window.speechSynthesis.speak(utterance)
-      }
-
-      if (window.speechSynthesis && window.speechSynthesis.getVoices().length === 0) {
-        const oldOnVoicesChanged = window.speechSynthesis.onvoiceschanged
-        window.speechSynthesis.onvoiceschanged = () => {
-          if (oldOnVoicesChanged) oldOnVoicesChanged()
-          window.speechSynthesis.onvoiceschanged = oldOnVoicesChanged
-          performSpeak()
-        }
-        setTimeout(() => {
-          if (isAiSpeaking.value && window.speechSynthesis.speaking === false) {
-            performSpeak()
-          }
-        }, 400)
-      } else {
-        performSpeak()
-      }
-    }
+    )
   }
 
   watch(isAudioEnabled, (newVal) => {

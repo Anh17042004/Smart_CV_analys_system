@@ -35,3 +35,6 @@ sentence-transformers>=2.2.0
 
 # Groq Cloud SDK
 groq>=0.9.0
+
+# Edge TTS
+edge-tts>=6.1.12
