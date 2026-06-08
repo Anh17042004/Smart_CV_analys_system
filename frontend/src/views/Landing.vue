@@ -75,33 +75,58 @@
       </article>
     </section>
 
-    <!-- Steps section -->
-    <section class="steps-section glass-card">
-      <div class="steps-header">
-        <div>
-          <p class="step-tag">{{ t('landing.flow') }}</p>
-          <h2 class="step-title" v-html="t('landing.flowTitle')"></h2>
-        </div>
-        <router-link to="/job-recommendation" class="step-link-action">{{ t('landing.seeRecommendations') }}</router-link>
+    <!-- Contact section -->
+    <section class="contact-section glass-card">
+      <div class="contact-header">
+        <p class="contact-tag">{{ t('landing.flow') }}</p>
+        <h2 class="contact-title">{{ t('landing.flowTitle') }}</h2>
+        <p class="contact-subtitle">{{ t('landing.contactSubtitle') }}</p>
       </div>
 
-      <div class="steps-grid">
-        <div class="step-card">
-          <p class="step-num">01</p>
-          <p class="step-label">{{ t('landing.step1') }}</p>
+      <div class="contact-grid">
+        <!-- Card 1: Authors -->
+        <div class="contact-card card-authors">
+          <div class="card-icon-wrapper">
+            <span class="card-icon">🧑‍💻</span>
+          </div>
+          <div class="card-info">
+            <h4>{{ t('landing.contactAuthors') }}</h4>
+            <p>TAnh + Long</p>
+          </div>
         </div>
-        <div class="step-card">
-          <p class="step-num">02</p>
-          <p class="step-label">{{ t('landing.step2') }}</p>
-        </div>
-        <div class="step-card">
-          <p class="step-num">03</p>
-          <p class="step-label">{{ t('landing.step3') }}</p>
-        </div>
-        <div class="step-card">
-          <p class="step-num">04</p>
-          <p class="step-label">{{ t('landing.step4') }}</p>
-        </div>
+
+        <!-- Card 2: Phone -->
+        <a href="tel:03475xxxxx" class="contact-card card-phone">
+          <div class="card-icon-wrapper">
+            <span class="card-icon">📞</span>
+          </div>
+          <div class="card-info">
+            <h4>{{ t('landing.contactPhone') }}</h4>
+            <p>03475xxxxx</p>
+          </div>
+        </a>
+
+        <!-- Card 3: Email -->
+        <a href="mailto:anh7bql@gmail.com" class="contact-card card-email">
+          <div class="card-icon-wrapper">
+            <span class="card-icon">📧</span>
+          </div>
+          <div class="card-info">
+            <h4>Email</h4>
+            <p>anh7bql@gmail.com</p>
+          </div>
+        </a>
+
+        <!-- Card 4: TikTok -->
+        <a href="https://www.tiktok.com/@anh_d04" target="_blank" rel="noopener noreferrer" class="contact-card card-tiktok">
+          <div class="card-icon-wrapper">
+            <span class="card-icon">📱</span>
+          </div>
+          <div class="card-info">
+            <h4>{{ t('landing.contactTiktok') }}</h4>
+            <p>@anh_d04</p>
+          </div>
+        </a>
       </div>
     </section>
   </main>
@@ -354,72 +379,105 @@ const { t } = useI18n()
   line-height: 1.6;
 }
 
-.steps-section {
-  text-align: left;
-  padding: 40px;
+.contact-section {
+  padding: 48px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-card);
+  background: var(--bg-glass);
+  box-shadow: var(--shadow-modal);
+  text-align: center;
+  margin-top: 32px;
 }
 
-.steps-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  flex-wrap: wrap;
-  gap: 16px;
-  border-bottom: 1px solid var(--border-divider);
-  padding-bottom: 24px;
-  margin-bottom: 32px;
+.contact-header {
+  margin-bottom: 40px;
 }
 
-.step-tag {
+.contact-tag {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.35em;
-  color: var(--text-link);
+  color: var(--primary-light);
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
-.step-title {
-  font-size: 1.75rem;
+.contact-title {
+  font-size: 2rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 12px 0;
+}
+
+.contact-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  text-align: left;
+  color: inherit;
+}
+
+.contact-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--border-highlight);
+  box-shadow: 0 8px 30px rgba(14, 165, 233, 0.15);
+  background: var(--bg-hover-subtle);
+}
+
+.card-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  font-size: 1.35rem;
+  transition: all var(--transition-fast);
+}
+
+.contact-card:hover .card-icon-wrapper {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  transform: scale(1.1);
+}
+
+.card-info h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-label);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 4px 0;
+}
+
+.card-info p {
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-heading);
   margin: 0;
-}
-
-.step-link-action {
-  font-size: 0.95rem;
-  color: var(--text-link);
-  font-weight: 500;
-}
-
-.step-link-action:hover {
-  text-decoration: underline;
-}
-
-.steps-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-.step-card {
-  background-color: var(--bg-card-inner);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-md);
-  padding: 24px;
-}
-
-.step-num {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-link);
-  margin-bottom: 8px;
-}
-
-.step-label {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--text-heading);
-  margin: 0;
+  word-break: break-all;
 }
 </style>
