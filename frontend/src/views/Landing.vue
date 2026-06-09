@@ -96,24 +96,24 @@
         </div>
 
         <!-- Card 2: Phone -->
-        <a href="tel:03xxxxx" class="contact-card card-phone">
+        <a href="tel:0338428888" class="contact-card card-phone">
           <div class="card-icon-wrapper">
             <span class="card-icon">📞</span>
           </div>
           <div class="card-info">
             <h4>{{ t('landing.contactPhone') }}</h4>
-            <p>03xxxxx</p>
+            <p>0338428888</p>
           </div>
         </a>
 
         <!-- Card 3: Email -->
-        <a href="mailto:cv_mentor@gmail.com" class="contact-card card-email">
+        <a href="mailto:Cvmentor.fpt@gmail.com" class="contact-card card-email">
           <div class="card-icon-wrapper">
             <span class="card-icon">📧</span>
           </div>
           <div class="card-info">
             <h4>Email</h4>
-            <p>cv_mentor@gmail.com</p>
+            <p>Cvmentor.fpt@gmail.com</p>
           </div>
         </a>
 
