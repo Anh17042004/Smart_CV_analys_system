@@ -57,21 +57,23 @@ class AIService:
                 format="json"
             )
             content = response['message']['content'].strip()
+            
+            # Strip markdown code block wrapper nếu có (```json ... ```)
+            if content.startswith("```"):
+                import re
+                content = re.sub(r"^```(?:json)?\s*", "", content)
+                content = re.sub(r"\s*```$", "", content)
+                content = content.strip()
+            
+            if not content:
+                raise Exception("AI Service trả về nội dung rỗng.")
+            
             return json.loads(content)
         
         except json.JSONDecodeError as jde:
-            raw_content = response['message']['content'] if 'response' in locals() and 'message' in response else 'No response content'
+            raw_content = response['message']['content'] if 'response' in dir() else 'No response content'
             logger.error(f"❌ Lỗi parse JSON từ Ollama: {jde}.\nNội dung thô nhận được:\n{raw_content}")
-            
-            # Cố gắng dọn dẹp markdown block nếu có
-            import re
-            cleaned = re.sub(r"^```(?:json)?\s*", "", raw_content.strip())
-            cleaned = re.sub(r"\s*```$", "", cleaned)
-            
-            try:
-                return json.loads(cleaned.strip())
-            except Exception:
-                raise Exception("AI Service trả về định dạng JSON không hợp lệ.")
+            raise Exception(f"AI Service trả về định dạng JSON không hợp lệ: {jde}")
         except Exception as e:
             logger.error(f"❌ Lỗi gọi Ollama (generate_json): {e}")
             raise Exception(f"AI Service Error: {str(e)}")

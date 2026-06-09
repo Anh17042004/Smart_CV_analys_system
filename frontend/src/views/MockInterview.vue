@@ -639,7 +639,7 @@ async function submitAnswer() {
   
   isAiThinking.value = true
   if (currentQuestionNumber.value === totalQuestions.value) {
-    loadingMessage.value = 'Đã hoàn thành các câu hỏi. AI đang tổng hợp và đánh giá toàn bộ buổi phỏng vấn (có thể mất 15-20 giây)...'
+    loadingMessage.value = 'Đã hoàn thành các câu hỏi. AI đang tổng hợp và đánh giá toàn bộ buổi phỏng vấn (có thể mất 30-60 giây)...'
   } else {
     loadingMessage.value = 'AI đang chuẩn bị câu hỏi tiếp theo...'
   }
