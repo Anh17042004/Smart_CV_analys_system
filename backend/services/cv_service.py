@@ -18,7 +18,7 @@ from core.logger import logger
 from database.models import CVUpload, CVAnalysis
 from database.repositories.cv_repo import cv_repo
 from services.ai_service import ai_service
-from schemas.cv import CVUploadResponse, CVAnalysisResponse
+from schemas.cv import CVUploadResponse, CVAnalysisResponse, AnalysisResult
 from prompts.cv_analysis import CV_ANALYSIS_PROMPT  # Import prompt từ file riêng biệt
 
 # Thư mục lưu trữ file CV upload vật lý
@@ -123,7 +123,7 @@ class CVService:
         )
 
         logger.info(f"⏳ Đang gửi yêu cầu phân tích CV lên Ollama Cloud...")
-        ai_response = ai_service.generate_json(prompt)
+        ai_response = ai_service.generate_json(prompt, schema=AnalysisResult.model_json_schema())
         logger.info(f"✅ Đã nhận được kết quả phân tích JSON sạch từ Ollama.")
 
         # Chuẩn hóa dữ liệu LLM trả về để tránh lỗi kiểu dữ liệu (vd: chuỗi thay vì danh sách)

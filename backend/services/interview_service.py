@@ -8,7 +8,7 @@ from database.repositories.interview_repo import interview_repo
 from database.repositories.cv_repo import cv_repo
 from database.repositories.job_repo import job_repo
 from services.ai_service import ai_service
-from schemas.interview import InterviewStartRequest, AnswerDetailResponse
+from schemas.interview import InterviewStartRequest, AnswerDetailResponse, QuestionEvaluationResult, InterviewSummaryResult
 from prompts.interview import (
     GENERATOR_PROMPT_TEMPLATE,
     EVALUATION_PROMPT_TEMPLATE,
@@ -100,7 +100,7 @@ class InterviewService:
                 answer_text=ans.answer_text,
                 language=lang_str
             )
-            evaluation_result = await asyncio.to_thread(ai_service.generate_json, eval_prompt)
+            evaluation_result = await asyncio.to_thread(ai_service.generate_json, eval_prompt, QuestionEvaluationResult.model_json_schema())
         except Exception as e:
             from core.logger import logger
             logger.error(f"❌ Lỗi đánh giá câu hỏi {ans.question_number} của AI: {str(e)}")
@@ -210,7 +210,7 @@ class InterviewService:
                 language=lang_str
             )
             
-            summary_result = await asyncio.to_thread(ai_service.generate_json, summary_prompt)
+            summary_result = await asyncio.to_thread(ai_service.generate_json, summary_prompt, InterviewSummaryResult.model_json_schema())
             
             # Cập nhật thông tin tổng hợp vào session
             await interview_repo.complete_session(

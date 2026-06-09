@@ -1,4 +1,5 @@
 import json
+import re
 from ollama import Client
 from core.config import settings
 from core.logger import logger
@@ -37,7 +38,43 @@ class AIService:
             logger.error(f"Lỗi gọi API Ollama: {str(e)}")
             raise Exception(f"AI Service Error: {str(e)}")
     
-    def generate_json(self, prompt: str, model_name:str = None) ->dict:
+    def _sanitize_json(self, content: str) -> str:
+        """Sanitizes JSON string by escaping invalid backslash and unicode escapes."""
+        result = []
+        i = 0
+        n = len(content)
+        while i < n:
+            char = content[i]
+            if char == '\\':
+                if i + 1 < n:
+                    next_char = content[i+1]
+                    if next_char in ['"', '\\', '/', 'b', 'f', 'n', 'r', 't']:
+                        result.append('\\' + next_char)
+                        i += 2
+                        continue
+                    elif next_char == 'u':
+                        if i + 5 < n and all(c in '0123456789abcdefABCDEF' for c in content[i+2:i+6]):
+                            result.append(content[i:i+6])
+                            i += 6
+                            continue
+                        else:
+                            result.append('\\\\u')
+                            i += 2
+                            continue
+                    else:
+                        result.append('\\\\' + next_char)
+                        i += 2
+                        continue
+                else:
+                    result.append('\\\\')
+                    i += 1
+            else:
+                result.append(char)
+                i += 1
+                
+        return "".join(result)
+
+    def generate_json(self, prompt: str, schema: dict = None, model_name:str = None) ->dict:
         if not self.client:
             raise Exception("External AI service is not available. Please try again later.")
         try:
@@ -54,19 +91,21 @@ class AIService:
             response = self.client.chat(
                 model=model_name or settings.OLLAMA_MODEL,
                 messages=messages,
-                format="json"
+                format=schema or "json"
             )
             content = response['message']['content'].strip()
             
             # Strip markdown code block wrapper nếu có (```json ... ```)
             if content.startswith("```"):
-                import re
                 content = re.sub(r"^```(?:json)?\s*", "", content)
                 content = re.sub(r"\s*```$", "", content)
                 content = content.strip()
             
             if not content:
                 raise Exception("AI Service trả về nội dung rỗng.")
+            
+            # Sanitize JSON string before loading
+            content = self._sanitize_json(content)
             
             return json.loads(content)
         

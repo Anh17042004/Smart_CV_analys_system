@@ -65,3 +65,22 @@ class InterviewSessionResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class QuestionEvaluationResult(BaseModel):
+    content_score: float = Field(..., description="Điểm nội dung câu trả lời (0.0 - 10.0)")
+    structure_score: float = Field(..., description="Điểm cấu trúc trình bày (0.0 - 10.0)")
+    communication_score: float = Field(..., description="Điểm kỹ năng truyền đạt (0.0 - 10.0)")
+    confidence_score: float = Field(..., description="Điểm sự tự tin (0.0 - 10.0)")
+    overall_score: float = Field(..., description="Điểm tổng quan chung cho câu trả lời (0.0 - 10.0)")
+    ai_feedback: str = Field(..., description="Nhận xét chi tiết của AI Mentor bằng tiếng Việt")
+    suggested_answer: str = Field(..., description="Câu trả lời gợi ý mẫu tối ưu bằng tiếng Việt")
+
+
+class InterviewSummaryResult(BaseModel):
+    overall_score: float = Field(..., description="Điểm trung bình cộng tổng thể toàn bộ buổi phỏng vấn (1.0 - 10.0)")
+    scores_by_category: Dict[str, float] = Field(..., description="Điểm trung bình theo từng tiêu chí: content, structure, communication, confidence")
+    strengths: List[str] = Field(..., description="Mảng chứa 3-5 điểm mạnh nhất của ứng viên")
+    improvements: List[str] = Field(..., description="Mảng chứa 3-5 điểm cần cải thiện kèm hành động cụ thể")
+    overall_feedback: str = Field(..., description="Đánh giá tổng quan định hướng và lời khuyên phát triển bằng tiếng Việt")
+
