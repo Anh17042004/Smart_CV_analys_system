@@ -364,7 +364,7 @@
             <textarea 
               v-model="userAnswer" 
               class="chat-textarea" 
-              :placeholder="isTranscribing ? 'AI đang nhận dạng giọng nói (Whisper)...' : isListening ? 'Giọng nói đang được ghi âm... Nhấn Mic lần nữa để hoàn thành.' : 'Nhập câu trả lời của bạn ở đây...'"
+              :placeholder="isTranscribing ? 'AI đang nhận dạng giọng nói...' : isListening ? 'Giọng nói đang được ghi âm... Nhấn Mic lần nữa để hoàn thành.' : 'Nhập câu trả lời của bạn ở đây...'"
               @keydown.enter.prevent="submitTypedAnswer"
               :disabled="isAiSpeaking || isAiThinking || isTranscribing"
             ></textarea>
