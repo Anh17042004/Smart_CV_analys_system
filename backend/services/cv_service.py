@@ -184,7 +184,7 @@ class CVService:
             analysis_result=ai_response
         )
 
-        # ✨ Tự động tìm kiếm và gợi ý việc làm dựa trên CV
+        # Tự động tìm kiếm và gợi ý việc làm dựa trên CV
         from services.job_service import job_service
         recs = []
         try:
@@ -351,7 +351,8 @@ class CVService:
             bottomMargin=0.5 * inch
         )
         
-        # Đăng ký font hỗ trợ Tiếng Việt (Arial)
+        # Đăng ký font hỗ trợ Tiếng Việt
+        import sys
         FONT_NAME = 'Helvetica'
         FONT_BOLD_NAME = 'Helvetica-Bold'
         
@@ -359,24 +360,56 @@ class CVService:
             from reportlab.pdfbase import pdfmetrics
             from reportlab.pdfbase.ttfonts import TTFont
             
-            # Đăng ký Arial (Font mặc định rất phổ biến trên Windows/macOS và nhiều hệ thống)
-            pdfmetrics.registerFont(TTFont('Arial', 'arial.ttf'))
-            pdfmetrics.registerFont(TTFont('Arial-Bold', 'arialbd.ttf'))
-            # Thiết lập liên kết font family để thẻ <b> hoạt động đúng
-            pdfmetrics.registerFontFamily('Arial', normal='Arial', bold='Arial-Bold')
+            # Danh sách font candidates theo thứ tự ưu tiên
+            font_candidates = []
             
-            FONT_NAME = 'Arial'
-            FONT_BOLD_NAME = 'Arial-Bold'
+            # 1. DejaVuSans (Linux/Docker - cài qua fonts-dejavu-core)
+            font_candidates.append((
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+            ))
+            
+            # 2. DejaVuSans đường dẫn khác (một số distro)
+            font_candidates.append((
+                "/usr/share/fonts/dejavu/DejaVuSans.ttf",
+                "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"
+            ))
+            
+            # 3. Arial trên Windows
+            if sys.platform.startswith('win'):
+                windir = os.environ.get('WINDIR', 'C:\\Windows')
+                font_candidates.insert(0, (
+                    os.path.join(windir, 'Fonts', 'arial.ttf'),
+                    os.path.join(windir, 'Fonts', 'arialbd.ttf')
+                ))
+            
+            # 4. Font bundled trong thư mục backend (nếu có)
+            backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            font_candidates.append((
+                os.path.join(backend_dir, 'fonts', 'DejaVuSans.ttf'),
+                os.path.join(backend_dir, 'fonts', 'DejaVuSans-Bold.ttf')
+            ))
+            
+            # Tìm font khả dụng đầu tiên
+            font_path = None
+            font_bold_path = None
+            for p, p_bold in font_candidates:
+                if os.path.exists(p) and os.path.exists(p_bold):
+                    font_path = p
+                    font_bold_path = p_bold
+                    break
+            
+            if font_path and font_bold_path:
+                pdfmetrics.registerFont(TTFont('ViFont', font_path))
+                pdfmetrics.registerFont(TTFont('ViFont-Bold', font_bold_path))
+                pdfmetrics.registerFontFamily('ViFont', normal='ViFont', bold='ViFont-Bold')
+                FONT_NAME = 'ViFont'
+                FONT_BOLD_NAME = 'ViFont-Bold'
+                logger.info(f"✅ Đã đăng ký font tiếng Việt: {font_path}")
+            else:
+                logger.warning("⚠️ Không tìm thấy font Unicode. PDF sẽ dùng Helvetica (không hỗ trợ tiếng Việt).")
         except Exception as e:
-            logger.warning(f"⚠️ Không thể đăng ký font Arial từ hệ thống: {e}. Thử DejaVuSans...")
-            try:
-                pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
-                pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
-                pdfmetrics.registerFontFamily('DejaVuSans', normal='DejaVuSans', bold='DejaVuSans-Bold')
-                FONT_NAME = 'DejaVuSans'
-                FONT_BOLD_NAME = 'DejaVuSans-Bold'
-            except Exception as e2:
-                logger.error(f"❌ Không thể nạp bất kỳ font Unicode tiếng Việt nào: {e2}. PDF có thể bị lỗi font.")
+            logger.error(f"❌ Lỗi đăng ký font Unicode: {e}. PDF sẽ dùng Helvetica.")
 
         styles = getSampleStyleSheet()
         

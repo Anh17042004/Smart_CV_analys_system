@@ -9,6 +9,7 @@ WORKDIR /app
 # Cài đặt các gói hệ thống cần thiết cho việc biên dịch nếu cần
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy file requirements.txt từ thư mục gốc
