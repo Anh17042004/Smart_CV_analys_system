@@ -33,6 +33,9 @@ const parseError = (error) => {
         return `${field}: ${msg}`
       }).join(', ')
     }
+    if (typeof data.detail === 'string') {
+      return data.detail
+    }
     if (data.message) {
       return data.message
     }
