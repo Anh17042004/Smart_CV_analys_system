@@ -463,13 +463,13 @@ onUnmounted(() => {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .nav-item {
   color: var(--nav-text);
-  font-size: 0.9rem;
-  padding: 8px 16px;
+  font-size: 0.88rem;
+  padding: 8px 12px;
   border-radius: 9999px;
   transition: all var(--transition-fast);
   text-decoration: none;
@@ -477,6 +477,20 @@ onUnmounted(() => {
   background: transparent;
   border: none;
   cursor: pointer;
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .nav-item {
+    font-size: 0.82rem;
+    padding: 6px 8px;
+  }
+  .nav-links {
+    gap: 4px;
+  }
+  .brand-logo {
+    width: 130px;
+  }
 }
 
 .nav-item:hover, .router-link-active.nav-item, .nav-item.active {
