@@ -1,4 +1,5 @@
 import os
+import asyncio
 from sentence_transformers import SentenceTransformer
 
 class EmbeddingService:
@@ -33,4 +34,19 @@ class EmbeddingService:
             return []
         return self.model.encode(texts).tolist()
 
+    # ── Phương thức bất đồng bộ (Async) ──
+    # Chạy tính toán embedding trên thread pool riêng để không chặn event loop ASGI
+    async def encode_async(self, text: str) -> list[float]:
+        """Phiên bản async của encode(), chạy trên thread pool để tránh block event loop."""
+        if not text:
+            return []
+        return await asyncio.to_thread(self.encode, text)
+
+    async def encode_batch_async(self, texts: list[str]) -> list[list[float]]:
+        """Phiên bản async của encode_batch(), chạy trên thread pool để tránh block event loop."""
+        if not texts:
+            return []
+        return await asyncio.to_thread(self.encode_batch, texts)
+
 embedding_service = EmbeddingService()
+

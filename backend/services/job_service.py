@@ -1,5 +1,6 @@
 import math
 import re
+import asyncio
 from typing import List, Tuple
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -115,14 +116,14 @@ class JobService:
         # ① Gọi LLM để tóm tắt JD theo định dạng chuẩn hóa
         prompt = JD_SUMMARY_PROMPT.format(job_description=jd_data.description)
         try:
-            summary = ai_service.generate_text(prompt)
+            summary = await asyncio.to_thread(ai_service.generate_text, prompt)
         except Exception as e:
             summary = jd_data.title  # Fallback nếu AI lỗi
 
-        # ② Gọi Embedding Service để sinh vector 384D từ summary
+        # ② Gọi Embedding Service để sinh vector 384D từ summary (async, không chặn event loop)
         embedding = None
         if summary:
-            embedding = embedding_service.encode(summary)
+            embedding = await embedding_service.encode_async(summary)
 
         # ③ Lưu thông tin vào SQLite/Postgres
         data_dict = jd_data.model_dump()
@@ -171,15 +172,15 @@ class JobService:
         embedding = cv.embedding
 
         if not summary or embedding is None:
-            # Tạo tóm tắt CV từ LLM
+            # Tạo tóm tắt CV từ LLM (async, không chặn event loop)
             prompt = CV_SUMMARY_PROMPT.format(extracted_text=cv.extracted_text or "")
             try:
-                summary = ai_service.generate_text(prompt)
+                summary = await asyncio.to_thread(ai_service.generate_text, prompt)
             except Exception:
                 summary = cv.filename
 
-            # Tạo embedding từ tóm tắt
-            embedding = embedding_service.encode(summary)
+            # Tạo embedding từ tóm tắt (async, không chặn event loop)
+            embedding = await embedding_service.encode_async(summary)
             
             # Cập nhật cache vào DB
             await job_repo.update_cv_summary_and_embedding(db, cv_id, summary, embedding)
@@ -283,7 +284,7 @@ class JobService:
             if not cv_summary:
                 prompt = CV_SUMMARY_PROMPT.format(extracted_text=latest_cv.extracted_text or "")
                 try:
-                    cv_summary = ai_service.generate_text(prompt)
+                    cv_summary = await asyncio.to_thread(ai_service.generate_text, prompt)
                 except Exception:
                     cv_summary = latest_cv.filename
                 await job_repo.update_cv_summary_and_embedding(db, latest_cv.id, cv_summary, latest_cv.embedding)

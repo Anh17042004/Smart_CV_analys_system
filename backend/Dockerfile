@@ -20,4 +20,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Chạy backend trên cổng 7860 (cổng mặc định của Hugging Face Spaces)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Sử dụng gunicorn với 2 workers (tối ưu cho 2 vCPU của HF Spaces Free)
+CMD ["gunicorn", "main:app", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:7860"]
