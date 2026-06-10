@@ -66,7 +66,8 @@ class JobRepository:
         return result.scalar_one_or_none()
 
     @staticmethod
-    async def search_by_keyword(db: AsyncSession, keyword: str, location: str = None, limit: int = 20) -> List[JobDescription]:
+    async def search_by_keyword(db: AsyncSession, keyword: str, location: str = None, limit: int = 20) -> tuple[List[JobDescription], int]:
+        from sqlalchemy import func
         conditions = [
             or_(
                 JobDescription.title.ilike(f"%{keyword}%"),
@@ -77,9 +78,16 @@ class JobRepository:
         if location:
             conditions.append(JobDescription.location.ilike(f"%{location}%"))
         
+        # 1. Count query
+        count_stmt = select(func.count()).select_from(JobDescription).where(and_(*conditions))
+        count_result = await db.execute(count_stmt)
+        total_count = count_result.scalar_one()
+
+        # 2. Select query
         stmt = select(JobDescription).where(and_(*conditions)).limit(limit)
         result = await db.execute(stmt)
-        return result.scalars().all()
+        results = result.scalars().all()
+        return results, total_count
 
     @staticmethod
     async def search_by_vector(db: AsyncSession, query_embedding: List[float], limit: int = 10) -> List[Tuple[JobDescription, float]]:

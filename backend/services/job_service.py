@@ -148,7 +148,7 @@ class JobService:
     # 2. Job Search (Từ khóa SQL)
     # ============================================================
     @staticmethod
-    async def search_jobs(db: AsyncSession, keyword: str, location: str = None) -> List[JobDescription]:
+    async def search_jobs(db: AsyncSession, keyword: str, location: str = None) -> tuple[List[JobDescription], int]:
         return await job_repo.search_by_keyword(db, keyword, location)
 
     # ============================================================

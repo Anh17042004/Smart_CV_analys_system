@@ -92,9 +92,9 @@ async def search_jobs(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    jds = await job_service.search_jobs(db, request.keyword, request.location)
+    jds, total = await job_service.search_jobs(db, request.keyword, request.location)
     results = [format_jd_response(jd) for jd in jds]
-    return JobSearchResponse(total=len(results), results=results)
+    return JobSearchResponse(total=total, results=results)
 
 
 # ============================================================
