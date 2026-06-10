@@ -70,9 +70,7 @@ class JobRepository:
         conditions = [
             or_(
                 JobDescription.title.ilike(f"%{keyword}%"),
-                JobDescription.company.ilike(f"%{keyword}%"),
-                JobDescription.skills.ilike(f"%{keyword}%"),
-                JobDescription.description.ilike(f"%{keyword}%")
+                JobDescription.company.ilike(f"%{keyword}%")
             ),
             JobDescription.is_active == True
         ]
