@@ -16,7 +16,8 @@
     "dashboardLink": "Dashboard",
     "lightMode": "Switch to Light Mode",
     "darkMode": "Switch to Dark Mode",
-    "mockInterview": "Mock Interview"
+    "mockInterview": "Mock Interview",
+    "about": "About"
   },
   "landing": {
     "tagBadge": "AI career assistant for students and early-career professionals",
@@ -325,5 +326,33 @@
     "errorPassword": "Failed to change password",
     "currentPasswordRequired": "Current password is required",
     "newPasswordLength": "New password must be at least 8 characters long"
+  },
+  "about": {
+    "title": "Project Introduction",
+    "subtitle": "Course SSB201 – Advanced Business Communication | FPT University",
+    "mentor": "Instructor: Ms. Nguyen Minh Hoa",
+    "group": "Conducted by: Group 01",
+    "members": "Team Members",
+    "membersTitle": "Team Members (Group 01)",
+    "objective": "Project Objective",
+    "context": "Project Context",
+    "vision": "Vision",
+    "mission": "Mission",
+    "coreValues": "Core Values",
+    "coreValuesDesc": "Usefulness, personalization, and companionship.",
+    "slogan": "Better CV, closer opportunities",
+    "paragraph1": "CV Mentor is a course project of SSB201 – Advanced Business Communication at FPT University, completed by Group 01 under the guidance of lecturer Ms. Nguyen Minh Hoa. The project team consists of 07 members: Ngo Van Viet, Nguyen Thi Thu Thuy, Vu Mai Linh, Le Duc Phong, Tran Thi Xuan, Tran Trung Hieu, and Nguyen Ngoc Linh.",
+    "paragraph2": "The project aims to develop an AI-powered platform to assist students in building CVs and preparing job applications. By analyzing the content, layout, skills, and experiences on a CV, the system provides appropriate assessments and edit suggestions, helping users refine their CVs professionally and better meet recruiters' requirements.",
+    "paragraph3": "CV Mentor was born from the fact that many students have academic, extracurricular, personal project, or part-time work experience but struggle to showcase and highlight those values on their CVs. In addition to AI resume analysis, the project integrates features like smart job recommendations, career orientation, and mock interviews, delivering a comprehensive solution for students preparing to apply.",
+    "visionDesc": "CV Mentor aims to become an intelligent, accessible, and market-aligned platform that supports students in resume building and application readiness.",
+    "missionDesc": "The project strives to help students discover their strengths, improve their resume quality, and boost confidence in seeking internships and jobs.",
+    "footerMessage": "Under the slogan 'Better CV, closer opportunities', CV Mentor is not just a resume editing tool but also a companion that helps students improve resume building skills, gain confidence, and access digital-era job markets.",
+    "roleLeader": "Group Leader / Backend Engineer",
+    "roleBA": "Business Analyst / Frontend",
+    "roleAI": "AI Researcher / UI-UX Designer",
+    "roleFE": "Frontend Engineer",
+    "roleQA": "Product Quality Assurance / Tester",
+    "roleArchitect": "System Architect / Database",
+    "roleContent": "Content Creator / Pitching"
   }
 }

@@ -16,7 +16,8 @@
     "dashboardLink": "Bảng điều khiển",
     "lightMode": "Chuyển sang sáng",
     "darkMode": "Chuyển sang tối",
-    "mockInterview": "Luyện phỏng vấn"
+    "mockInterview": "Luyện phỏng vấn",
+    "about": "Giới thiệu"
   },
   "landing": {
     "tagBadge": "Trợ lý nghề nghiệp AI cho sinh viên và người mới đi làm",
@@ -325,5 +326,33 @@
     "errorPassword": "Không thể đổi mật khẩu",
     "currentPasswordRequired": "Vui lòng nhập mật khẩu hiện tại",
     "newPasswordLength": "Mật khẩu mới phải từ 8 ký tự trở lên"
+  },
+  "about": {
+    "title": "Giới Thiệu Dự Án",
+    "subtitle": "Học phần SSB201 – Advanced Business Communication | Trường Đại học FPT",
+    "mentor": "Giảng viên hướng dẫn: Cô Nguyễn Minh Hoà",
+    "group": "Thực hiện bởi: Nhóm 01 (Group 01)",
+    "members": "Thành viên dự án",
+    "membersTitle": "Thành viên dự án (Nhóm 01)",
+    "objective": "Mục tiêu dự án",
+    "context": "Bối cảnh dự án",
+    "vision": "Tầm nhìn",
+    "mission": "Sứ mệnh",
+    "coreValues": "Giá trị cốt lõi",
+    "coreValuesDesc": "Tính hữu ích, tính cá nhân hóa và sự đồng hành.",
+    "slogan": "CV tốt hơn, cơ hội gần hơn",
+    "paragraph1": "CV Mentor là dự án môn học thuộc học phần SSB201 – Advanced Business Communication của Trường Đại học FPT, được thực hiện bởi Group 01 dưới sự hướng dẫn của giảng viên Nguyễn Minh Hoà. Nhóm dự án gồm 07 thành viên: Ngô Văn Việt, Nguyễn Thị Thu Thủy, Vũ Mai Linh, Lê Đức Phong, Trần Thị Xuân, Trần Trung Hiếu và Nguyễn Ngọc Linh.",
+    "paragraph2": "Dự án được xây dựng với mục tiêu phát triển một nền tảng ứng dụng trí tuệ nhân tạo (AI) hỗ trợ sinh viên trong quá trình xây dựng CV và chuẩn bị hồ sơ ứng tuyển. Thông qua việc phân tích nội dung, bố cục, kỹ năng và kinh nghiệm trên CV, hệ thống sẽ đưa ra những đánh giá và gợi ý chỉnh sửa phù hợp, giúp người dùng hoàn thiện CV theo hướng chuyên nghiệp và đáp ứng tốt hơn yêu cầu của nhà tuyển dụng.",
+    "paragraph3": "CV Mentor ra đời từ thực tế nhiều sinh viên đã có kinh nghiệm học tập, hoạt động ngoại khóa, dự án cá nhân hoặc làm thêm nhưng vẫn gặp khó khăn trong việc trình bày và làm nổi bật những giá trị đó trên CV. Bên cạnh chức năng phân tích CV bằng AI, dự án còn hướng đến việc tích hợp các tính năng như gợi ý việc làm phù hợp, định hướng nghề nghiệp và phỏng vấn thử, mang đến một giải pháp toàn diện cho sinh viên trong quá trình chuẩn bị ứng tuyển.",
+    "visionDesc": "CV Mentor hướng tới trở thành một nền tảng hỗ trợ sinh viên xây dựng CV và chuẩn bị ứng tuyển một cách thông minh, dễ tiếp cận và phù hợp với nhu cầu thực tế của thị trường lao động.",
+    "missionDesc": "Dự án mong muốn giúp sinh viên nhận ra điểm mạnh của bản thân, cải thiện chất lượng CV và tự tin hơn trong quá trình tìm kiếm cơ hội thực tập, việc làm.",
+    "footerMessage": "Với thông điệp “CV tốt hơn, cơ hội gần hơn”, CV Mentor không chỉ là một công cụ hỗ trợ chỉnh sửa CV mà còn là người đồng hành giúp sinh viên nâng cao kỹ năng xây dựng hồ sơ, tăng sự tự tin và mở rộng cơ hội tiếp cận thị trường lao động trong thời đại số.",
+    "roleLeader": "Trưởng nhóm / Kỹ sư Backend",
+    "roleBA": "Phân tích nghiệp vụ / Frontend",
+    "roleAI": "Nghiên cứu AI / Thiết kế UI-UX",
+    "roleFE": "Kỹ sư Frontend",
+    "roleQA": "Đảm bảo chất lượng / Kiểm thử",
+    "roleArchitect": "Kiến trúc hệ thống / Cơ sở dữ liệu",
+    "roleContent": "Sáng tạo nội dung / Thuyết trình"
   }
 }

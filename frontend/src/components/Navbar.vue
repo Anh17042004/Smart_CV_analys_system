@@ -6,6 +6,7 @@
       </router-link>
 
       <nav class="nav-links">
+        <router-link to="/about" class="nav-item">{{ t('nav.about') }}</router-link>
         <router-link to="/dashboard" class="nav-item">{{ t('nav.dashboard') }}</router-link>
         <router-link to="/cv-analysis" class="nav-item">{{ t('nav.cvAnalysis') }}</router-link>
         <router-link to="/interview" class="nav-item">{{ t('nav.mockInterview') }}</router-link>
