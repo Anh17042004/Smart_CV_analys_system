@@ -83,9 +83,12 @@ function disconnectPresence() {
 // ──────────────────────────────────────
 async function trackPageView(path) {
   try {
+    const urlParams = new URLSearchParams(window.location.search)
+    const utmSource = urlParams.get('utm_source')
+
     await api.post('/admin/track', {
       path: path,
-      referrer: document.referrer || null,
+      referrer: utmSource || document.referrer || null,
     })
   } catch (e) {
     // Bỏ qua lỗi tracking (không ảnh hưởng UX)

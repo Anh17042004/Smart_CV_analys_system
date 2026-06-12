@@ -798,7 +798,7 @@ const featureUsageChartData = computed(() => {
 })
 
 const trafficSourcesChartData = computed(() => {
-  const sources = stats.value.traffic?.sources || { Direct: 0, Google: 0, Facebook: 0, Instagram: 0, LinkedIn: 0, TikTok: 0, 'Twitter/X': 0, Other: 0 }
+  const sources = stats.value.traffic?.sources || { Direct: 0, Google: 0, Facebook: 0, Instagram: 0, LinkedIn: 0, TikTok: 0, 'Twitter/X': 0, Zalo: 0, Other: 0 }
   return {
     labels: Object.keys(sources),
     datasets: [{
@@ -811,6 +811,7 @@ const trafficSourcesChartData = computed(() => {
         'rgba(14, 165, 233, 0.8)',  // LinkedIn - Light Blue
         'rgba(244, 63, 94, 0.8)',   // TikTok - Rose/Red
         'rgba(20, 184, 166, 0.8)',  // Twitter/X - Teal
+        'rgba(168, 85, 247, 0.8)',  // Zalo - Purple
         'rgba(156, 163, 175, 0.6)', // Other - Gray
       ],
       borderColor: isLightTheme.value ? '#ffffff' : '#1e1b4b',
@@ -1159,6 +1160,7 @@ const userTrafficChartData = computed(() => {
         'rgba(14, 165, 233, 0.8)',  // LinkedIn - Light Blue
         'rgba(244, 63, 94, 0.8)',   // TikTok - Rose/Red
         'rgba(20, 184, 166, 0.8)',  // Twitter/X - Teal
+        'rgba(168, 85, 247, 0.8)',  // Zalo - Purple
         'rgba(156, 163, 175, 0.6)', // Other - Gray
       ],
       borderColor: isLightTheme.value ? '#ffffff' : '#1e1b4b',

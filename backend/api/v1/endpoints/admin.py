@@ -321,6 +321,7 @@ async def get_admin_stats(
             "LinkedIn": 0,
             "TikTok": 0,
             "Twitter/X": 0,
+            "Zalo": 0,
             "Other": 0
         }
         for ref, count in referrer_rows:
@@ -341,6 +342,8 @@ async def get_admin_stats(
                 traffic_sources["TikTok"] += count
             elif "twitter" in ref.lower() or "x.com" in ref.lower() or "t.co" in ref.lower():
                 traffic_sources["Twitter/X"] += count
+            elif "zalo" in ref.lower():
+                traffic_sources["Zalo"] += count
             else:
                 traffic_sources["Other"] += count
 
@@ -904,6 +907,7 @@ async def get_user_stats(
             "LinkedIn": 0,
             "TikTok": 0,
             "Twitter/X": 0,
+            "Zalo": 0,
             "Other": 0
         }
         for ref, count in referrer_rows:
@@ -924,6 +928,8 @@ async def get_user_stats(
                 traffic_sources["TikTok"] += count
             elif "twitter" in ref.lower() or "x.com" in ref.lower() or "t.co" in ref.lower():
                 traffic_sources["Twitter/X"] += count
+            elif "zalo" in ref.lower():
+                traffic_sources["Zalo"] += count
             else:
                 traffic_sources["Other"] += count
 

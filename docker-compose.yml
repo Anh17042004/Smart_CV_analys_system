@@ -16,6 +16,46 @@ services:
     networks:
       - cv_mentor_network
 
+  cv_mentor_backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cv_mentor_backend
+    restart: always
+    environment:
+      # Nếu sử dụng DB nội bộ trong docker stack, hãy trỏ DATABASE_URL vào cv_mentor_db
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@cv_mentor_db:5432/cv_mentor
+      - GOOGLE_API_KEY=your_google_api_key_here
+      - JWT_SECRET=abcd@12345
+      - JWT_ALGORITHM=HS256
+      - JWT_EXPIRE_HOURS=24
+      - OLLAMA_HOST=https://ollama.com
+      - OLLAMA_API_KEY=your_ollama_key_here
+      - OLLAMA_MODEL=gpt-oss:120b
+      - HOST=0.0.0.0
+      - PORT=7860
+      - WORKERS=2
+      - DEBUG=False
+    depends_on:
+      - cv_mentor_db
+    networks:
+      - cv_mentor_network
+
+  cv_mentor_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cv_mentor_frontend
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - cv_mentor_backend
+    networks:
+      - cv_mentor_network
+
 volumes:
   cv_mentor_postgres_data:
 

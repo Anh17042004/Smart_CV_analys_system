@@ -7,9 +7,9 @@ from sqlalchemy import text
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=False,
-    # ── Connection Pool tối ưu cho 60 concurrent users ──
-    pool_size=15,          # Số kết nối giữ sẵn trong pool (luôn mở)
-    max_overflow=25,       # Số kết nối bổ sung tối đa khi pool đầy (tổng = 15+25 = 40 < giới hạn 60 của Supabase)
+    # ── Connection Pool tối ưu cho gói Supabase Free (giới hạn 15 kết nối) ──
+    pool_size=3,           # Số kết nối giữ sẵn trong pool (luôn mở)
+    max_overflow=5,        # Số kết nối bổ sung tối đa khi pool đầy (tổng = 3+5 = 8 kết nối mỗi instance)
     pool_recycle=1800,     # Tái tạo kết nối mỗi 30 phút để tránh kết nối cũ bị đóng bởi server
     pool_pre_ping=True,    # Kiểm tra kết nối còn sống trước khi sử dụng (tránh lỗi "connection closed")
 )
