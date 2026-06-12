@@ -85,6 +85,14 @@ const routes = [
     name: 'InterviewResult',
     component: () => import('../views/InterviewResult.vue'),
     meta: { requireAuth: true }
+  },
+
+  // ===== Admin Routes =====
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: () => import('../views/AdminDashboard.vue'),
+    meta: { requireAuth: true, requireAdmin: true }
   }
 ]
 
@@ -108,9 +116,12 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.meta.requireAuth && !authStore.isAuthenticated) {
     next({ name: 'Login', query: { redirect: to.fullPath } })
+  } else if (to.meta.requireAdmin && authStore.user?.role !== 'admin') {
+    next({ name: 'Dashboard' })
   } else {
     next()
   }
 })
 
 export default router
+

@@ -164,6 +164,9 @@
   --role-admin-bg: rgba(239, 68, 68, 0.1);
   --role-admin-border: rgba(239, 68, 68, 0.25);
   --role-admin-text: #f87171;
+  --role-premium-bg: rgba(251, 191, 36, 0.1);
+  --role-premium-border: rgba(251, 191, 36, 0.25);
+  --role-premium-text: #fbbf24;
 
   /* Misc */
   --btn-close-color: #cbd5e1;
@@ -306,6 +309,9 @@
   --role-admin-bg: rgba(239, 68, 68, 0.08);
   --role-admin-border: rgba(239, 68, 68, 0.2);
   --role-admin-text: #dc2626;
+  --role-premium-bg: rgba(217, 119, 6, 0.08);
+  --role-premium-border: rgba(217, 119, 6, 0.2);
+  --role-premium-text: #b45309;
 
   /* Misc */
   --btn-close-color: #64748b;

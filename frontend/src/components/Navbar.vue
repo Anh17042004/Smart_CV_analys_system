@@ -88,6 +88,12 @@
                 <router-link to="/interview" class="user-dropdown-item" @click="showUserDropdown = false">
                   {{ t('nav.mockInterview') }}
                 </router-link>
+                <template v-if="authStore.user?.role === 'admin'">
+                  <div class="user-dropdown-divider"></div>
+                  <router-link to="/admin" class="user-dropdown-item admin-item" @click="showUserDropdown = false">
+                    ⚙️ {{ t('nav.admin') }}
+                  </router-link>
+                </template>
               </div>
               
               <div class="user-dropdown-divider"></div>
@@ -651,6 +657,8 @@ onUnmounted(() => {
   border-radius: var(--radius-lg);
   padding: 16px;
   width: 280px;
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-modal);
@@ -745,6 +753,15 @@ onUnmounted(() => {
 .logout-item:hover {
   background-color: rgba(239, 68, 68, 0.1);
   color: #ef4444;
+}
+
+.admin-item {
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+
+.admin-item:hover {
+  background-color: rgba(99, 102, 241, 0.1) !important;
 }
 
 @media (max-width: 768px) {
@@ -986,5 +1003,24 @@ onUnmounted(() => {
 @keyframes slideUp {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+/* Mobile Responsiveness Improvements */
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 12px 16px;
+  }
+  .brand-logo {
+    width: 110px;
+  }
+  .auth-buttons {
+    gap: 8px;
+  }
+  .user-dropdown-menu {
+    width: calc(100vw - 32px);
+    max-width: 260px;
+    right: -8px;
+    padding: 12px;
+  }
 }
 </style>

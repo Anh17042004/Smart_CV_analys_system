@@ -236,3 +236,38 @@ class InterviewAnswer(Base):
 
     # Relationships
     session: Mapped["InterviewSession"] = relationship(back_populates="answers")
+
+
+# ============================================================
+# 9. ACCESS_LOGS — Ghi nhận lượt truy cập & nguồn (Admin Dashboard)
+# ============================================================
+class AccessLog(Base):
+    __tablename__ = "access_logs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    ip: Mapped[str] = mapped_column(String(50), nullable=False)
+    user_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    path: Mapped[str] = mapped_column(String(255), nullable=False)
+    referrer: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+
+
+# ============================================================
+# 10. USER_SESSIONS — Phiên kết nối WebSocket (Admin Dashboard)
+# ============================================================
+class UserSession(Base):
+    __tablename__ = "user_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True
+    )
+    login_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    logout_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    duration: Mapped[int | None] = mapped_column(Integer, nullable=True)  # Seconds
