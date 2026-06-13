@@ -1,5 +1,6 @@
 import io
 import os
+import re
 import json
 import asyncio
 from typing import List
@@ -26,6 +27,18 @@ from prompts.cv_analysis import CV_ANALYSIS_PROMPT  # Import prompt từ file ri
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+
+def sanitize_text(text: str) -> str:
+    """
+    Loại bỏ ký tự Null (\x00) và các ký tự điều khiển non-printable khác
+    tránh lỗi encoding UTF8 trên PostgreSQL.
+    """
+    if not text:
+        return ""
+    text = text.replace("\x00", "").replace("\u0000", "")
+    return re.sub(r"[\x00-\x08\x0B\x0C\x0E-\x1F]", "", text)
+
+
 class CVService:
     def extract_text(self, file_bytes: bytes, file_type: str) -> str:
         """Trích xuất chữ từ file PDF hoặc DOCX."""
@@ -37,13 +50,13 @@ class CVService:
                         page_text = page.extract_text()
                         if page_text:
                             text += page_text + "\n"
-                return text.strip()
+                return sanitize_text(text)
             elif file_type == "docx":
                 doc = Document(io.BytesIO(file_bytes))
                 text = ""
                 for para in doc.paragraphs:
                     text += para.text + "\n"
-                return text.strip()
+                return sanitize_text(text)
             else:
                 raise ValueError("Định dạng file không được hỗ trợ.")
         except Exception as e:
