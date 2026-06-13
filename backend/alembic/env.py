@@ -28,7 +28,8 @@ from database.models import (
     AnalysisRecommendation,
     SavedJob,
     InterviewSession,
-    InterviewAnswer
+    InterviewAnswer,
+    ApiKeyUsage
 )
 
 # this is the Alembic Config object, which provides

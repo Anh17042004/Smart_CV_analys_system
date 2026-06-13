@@ -13,7 +13,7 @@ async def transcribe_audio(
     """
     Tải file ghi âm lên, gọi qua dịch vụ Groq Whisper để dịch thành văn bản.
     """
-    if not settings.GROQ_API_KEY:
+    if not settings.groq_key_list:
          raise HTTPException(
              status_code=status.HTTP_501_NOT_IMPLEMENTED,
              detail="Dịch vụ Whisper chưa được cấu hình. GROQ_API_KEY bị thiếu trên backend."
@@ -40,5 +40,5 @@ async def get_stt_config():
     """
     Trả về thông tin xem dịch vụ Whisper STT có sẵn sàng hoạt động (đã cấu hình API key) hay không.
     """
-    is_available = bool(settings.GROQ_API_KEY and settings.GROQ_API_KEY.strip())
+    is_available = bool(settings.groq_key_list)
     return {"whisper_available": is_available}

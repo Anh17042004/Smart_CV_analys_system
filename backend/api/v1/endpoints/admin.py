@@ -1190,3 +1190,52 @@ async def update_user_role(
         await db.commit()
         logger.info(f"🛡️ Admin {admin.id} changed role of User {user_id} to {payload.role}")
         return {"status": "updated", "role": user.role}
+
+
+# ──────────────────────────────────────────────
+# API KEY MONITORING (Key Rotation)
+# ──────────────────────────────────────────────
+
+@router.get("/api-keys/status")
+async def get_api_keys_status(admin: User = Depends(require_admin)):
+    """
+    Trả về trạng thái hiện tại của tất cả API keys (Ollama + Groq).
+    Bao gồm: tổng số key, key đang hoạt động, key đang bị cooldown, thống kê usage.
+    """
+    from services.ai_service import ai_service
+    from services.stt_service import stt_service
+    
+    result = {}
+    if ai_service.rotator:
+        result["ollama"] = ai_service.rotator.get_status()
+    else:
+        result["ollama"] = {"total": 0, "active": 0, "cooldown": 0, "keys": {}}
+    
+    if stt_service.rotator:
+        result["groq"] = stt_service.rotator.get_status()
+    else:
+        result["groq"] = {"total": 0, "active": 0, "cooldown": 0, "keys": {}}
+    
+    return result
+
+
+@router.post("/api-keys/flush-stats")
+async def flush_api_keys_stats(admin: User = Depends(require_admin)):
+    """
+    Đẩy thống kê usage in-memory vào database và trả về kết quả.
+    Gọi endpoint này để lưu trữ lâu dài thống kê API key.
+    """
+    from services.ai_service import ai_service
+    from services.stt_service import stt_service
+    
+    flushed = []
+    async with AsyncSessionLocal() as db:
+        if ai_service.rotator:
+            await ai_service.rotator.flush_stats_to_db(db)
+            flushed.append("ollama")
+        if stt_service.rotator:
+            await stt_service.rotator.flush_stats_to_db(db)
+            flushed.append("groq")
+    
+    return {"status": "ok", "flushed_providers": flushed}
+

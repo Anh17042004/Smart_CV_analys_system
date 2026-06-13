@@ -137,10 +137,8 @@ class CVService:
         )
 
         logger.info(f"⏳ Đang gửi yêu cầu phân tích CV lên Ollama Cloud...")
-        # Chạy trên thread pool để không chặn event loop ASGI khi có nhiều người dùng đồng thời
-        ai_response = await asyncio.to_thread(
-            ai_service.generate_json, prompt, AnalysisResult.model_json_schema()
-        )
+        # generate_json đã là async method (nội bộ tự chạy trên thread pool)
+        ai_response = await ai_service.generate_json(prompt, AnalysisResult.model_json_schema())
         logger.info(f"✅ Đã nhận được kết quả phân tích JSON sạch từ Ollama.")
 
         # Chuẩn hóa dữ liệu LLM trả về để tránh lỗi kiểu dữ liệu (vd: chuỗi thay vì danh sách)

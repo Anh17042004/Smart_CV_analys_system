@@ -271,3 +271,26 @@ class UserSession(Base):
     )
     logout_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     duration: Mapped[int | None] = mapped_column(Integer, nullable=True)  # Seconds
+
+
+# ============================================================
+# 11. API_KEY_USAGES — Thống kê sử dụng API Key (Key Rotation)
+# ============================================================
+class ApiKeyUsage(Base):
+    __tablename__ = "api_key_usages"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    provider: Mapped[str] = mapped_column(String(50), nullable=False, index=True)   # "ollama" | "groq"
+    key_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)  # sha256(key)[:16]
+    request_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    error_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    rate_limit_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc)
+    )
+

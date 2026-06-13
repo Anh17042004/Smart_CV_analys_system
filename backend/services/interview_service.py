@@ -68,7 +68,7 @@ class InterviewService:
             language=lang_str
         )
 
-        first_question_text = await asyncio.to_thread(ai_service.generate_text, prompt)
+        first_question_text = await ai_service.generate_text(prompt)
         if not first_question_text:
             first_question_text = "Xin chào bạn, chúng ta bắt đầu phỏng vấn nhé. Hãy giới thiệu một chút về bản thân bạn?"
 
@@ -100,7 +100,7 @@ class InterviewService:
                 answer_text=ans.answer_text,
                 language=lang_str
             )
-            evaluation_result = await asyncio.to_thread(ai_service.generate_json, eval_prompt, QuestionEvaluationResult.model_json_schema())
+            evaluation_result = await ai_service.generate_json(eval_prompt, QuestionEvaluationResult.model_json_schema())
         except Exception as e:
             from core.logger import logger
             logger.error(f"❌ Lỗi đánh giá câu hỏi {ans.question_number} của AI: {str(e)}")
@@ -210,7 +210,7 @@ class InterviewService:
                 language=lang_str
             )
             
-            summary_result = await asyncio.to_thread(ai_service.generate_json, summary_prompt, InterviewSummaryResult.model_json_schema())
+            summary_result = await ai_service.generate_json(summary_prompt, InterviewSummaryResult.model_json_schema())
             
             # Cập nhật thông tin tổng hợp vào session
             await interview_repo.complete_session(
@@ -263,7 +263,7 @@ class InterviewService:
                 language=lang_str
             )
             
-            next_question_text = await asyncio.to_thread(ai_service.generate_text, gen_prompt)
+            next_question_text = await ai_service.generate_text(gen_prompt)
             if not next_question_text:
                 next_question_text = f"Câu hỏi tiếp theo dành cho bạn: Hãy chia sẻ về một thử thách kỹ thuật lớn nhất bạn từng gặp và cách bạn giải quyết nó?"
                 

@@ -116,7 +116,7 @@ class JobService:
         # ① Gọi LLM để tóm tắt JD theo định dạng chuẩn hóa
         prompt = JD_SUMMARY_PROMPT.format(job_description=jd_data.description)
         try:
-            summary = await asyncio.to_thread(ai_service.generate_text, prompt)
+            summary = await ai_service.generate_text(prompt)
         except Exception as e:
             summary = jd_data.title  # Fallback nếu AI lỗi
 
@@ -175,7 +175,7 @@ class JobService:
             # Tạo tóm tắt CV từ LLM (async, không chặn event loop)
             prompt = CV_SUMMARY_PROMPT.format(extracted_text=cv.extracted_text or "")
             try:
-                summary = await asyncio.to_thread(ai_service.generate_text, prompt)
+                summary = await ai_service.generate_text(prompt)
             except Exception:
                 summary = cv.filename
 
@@ -284,7 +284,7 @@ class JobService:
             if not cv_summary:
                 prompt = CV_SUMMARY_PROMPT.format(extracted_text=latest_cv.extracted_text or "")
                 try:
-                    cv_summary = await asyncio.to_thread(ai_service.generate_text, prompt)
+                    cv_summary = await ai_service.generate_text(prompt)
                 except Exception:
                     cv_summary = latest_cv.filename
                 await job_repo.update_cv_summary_and_embedding(db, latest_cv.id, cv_summary, latest_cv.embedding)
