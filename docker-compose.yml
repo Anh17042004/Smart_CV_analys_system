@@ -55,6 +55,20 @@ services:
     networks:
       - cv_mentor_network
 
+  # ───────────────────────────────────────────────────────────────────
+  # CLOUDFLARE TUNNEL SERVICE
+  # ───────────────────────────────────────────────────────────────────
+  cv_mentor_tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: cv_mentor_tunnel
+    restart: always
+    # Khởi chạy tunnel sử dụng token nạp từ file .env
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - cv_mentor_frontend
+    networks:
+      - cv_mentor_network
+
 volumes:
   cv_mentor_postgres_data:
 
