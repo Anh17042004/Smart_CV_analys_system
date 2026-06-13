@@ -1,46 +1,44 @@
 version: '3.8'
 
 services:
+  # ───────────────────────────────────────────────────────────────────
+  # DATABASE SERVICE (Postgres với pgvector)
+  # Chạy trực tiếp trên VPS để lưu trữ dữ liệu cục bộ
+  # ───────────────────────────────────────────────────────────────────
   cv_mentor_db:
-    image: ankane/pgvector:v0.5.1  # Sử dụng image tích hợp sẵn pgvector
+    image: ankane/pgvector:v0.5.1  # Sử dụng image tích hợp sẵn pgvector cho AI search
     container_name: cv_mentor_postgres
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: cv_mentor
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}  # Giá trị sẽ được lấy từ file .env
+      POSTGRES_DB: ${POSTGRES_DB:-cv_mentor}
     ports:
-      - "5433:5432"  # Ánh xạ ra cổng 5433 trên host để tránh xung đột cổng 5432
+      - "5433:5432"  # Ánh xạ ra ngoài cổng 5433 trên host để kết nối ngoài nếu cần quản trị
     volumes:
       - cv_mentor_postgres_data:/var/lib/postgresql/data
     networks:
       - cv_mentor_network
 
+  # ───────────────────────────────────────────────────────────────────
+  # BACKEND SERVICE (FastAPI)
+  # ───────────────────────────────────────────────────────────────────
   cv_mentor_backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: cv_mentor_backend
     restart: always
-    environment:
-      # Nếu sử dụng DB nội bộ trong docker stack, hãy trỏ DATABASE_URL vào cv_mentor_db
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@cv_mentor_db:5432/cv_mentor
-      - GOOGLE_API_KEY=your_google_api_key_here
-      - JWT_SECRET=abcd@12345
-      - JWT_ALGORITHM=HS256
-      - JWT_EXPIRE_HOURS=24
-      - OLLAMA_HOST=https://ollama.com
-      - OLLAMA_API_KEY=your_ollama_key_here
-      - OLLAMA_MODEL=gpt-oss:120b
-      - HOST=0.0.0.0
-      - PORT=7860
-      - WORKERS=2
-      - DEBUG=False
+    env_file:
+      - .env  # Nạp toàn bộ các cấu hình bảo mật từ file .env ở máy chủ vào container
     depends_on:
-      - cv_mentor_db
+      - cv_mentor_db  # Chờ database container khởi động trước
     networks:
       - cv_mentor_network
 
+  # ───────────────────────────────────────────────────────────────────
+  # FRONTEND & REVERSE PROXY SERVICE (Vue.js + Nginx)
+  # ───────────────────────────────────────────────────────────────────
   cv_mentor_frontend:
     build:
       context: ./frontend
@@ -48,8 +46,9 @@ services:
     container_name: cv_mentor_frontend
     restart: always
     ports:
-      - "80:80"
+      - "80:80"  # Expose cổng 80 của VPS (Nginx) ra ngoài internet
     volumes:
+      # Gắn file cấu hình Nginx từ ngoài vào để xử lý định tuyến/WebSockets
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - cv_mentor_backend

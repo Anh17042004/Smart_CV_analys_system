@@ -19,6 +19,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy toàn bộ mã nguồn của backend vào container
 COPY . .
 
-# Chạy backend trên cổng 7860 (cổng mặc định của Hugging Face Spaces)
-# Sử dụng gunicorn với 2 workers (tối ưu cho 2 vCPU của HF Spaces Free)
-CMD ["gunicorn", "main:app", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:7860"]
+# Chạy backend trên cổng 8000 (cổng tiêu chuẩn của FastAPI/Backend trên VPS)
+# Sử dụng gunicorn với 2 workers (đảm bảo cân bằng giữa hiệu năng và tài nguyên RAM của VPS)
+CMD ["gunicorn", "main:app", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000"]
